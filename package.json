@@ -21,7 +21,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint:fix": "eslint src/ --fix",
+    "lint:fix": "eslint src/ --fix && npm run prettify",
     "lint": "eslint src/",
     "prettify": "prettier src/ --write"
   },
@@ -32,8 +32,7 @@
       "plugin:prettier/recommended"
     ]
   },
-  "prettier": {
-  },
+  "prettier": {},
   "browserslist": {
     "production": [
       ">0.2%",
