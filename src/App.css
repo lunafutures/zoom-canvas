@@ -1,5 +1,20 @@
 .App {
-  text-align: center;
+  display: grid;
+  grid-template-rows: [header] auto [body] 1fr [footer] auto;
+  grid-template-columns: 1fr;
+  height: 100vh;
+}
+
+.AppHeader {
+  grid-row: header / span 1;
+}
+
+.AppBody {
+  grid-row: body / span 1;
+}
+
+.AppFooter {
+  grid-row: footer / span 1;
 }
 
 .App-logo {

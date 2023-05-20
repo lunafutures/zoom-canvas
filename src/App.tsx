@@ -5,20 +5,27 @@ import "./App.css";
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className="AppHeader">Header</div>
+      <div
+        className="AppBody"
+        onMouseMove={(e) => {
+          const q = {
+            pageX: e.pageX,
+            pageY: e.pageY,
+            screenX: e.screenX,
+            screenY: e.screenY,
+            clientX: e.clientX,
+            clientY: e.clientY,
+            offsetX: e.nativeEvent.offsetX,
+            offsetY: e.nativeEvent.offsetY,
+          };
+          console.log(q);
+        }}
+        style={{ background: "lightblue", height: "auto" }}
+      >
+        Body
+      </div>
+      <div className="AppFooter">Footer</div>
     </div>
   );
 }
