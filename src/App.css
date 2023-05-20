@@ -12,8 +12,10 @@
 .AppBody {
   grid-row: body / span 1;
 
-  /* Necessary to making absolute children relative to this instead of the browser */
+  /* Necessary to making absolute children relative to this container instead of the browser */
   position: relative;
+
+  /* Don't let boxes appear outside of this container */
   overflow: hidden;
 }
 
