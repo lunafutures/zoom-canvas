@@ -14,6 +14,7 @@
 
   /* Necessary to making absolute children relative to this instead of the browser */
   position: relative;
+  overflow: hidden;
 }
 
 .AppFooter {
