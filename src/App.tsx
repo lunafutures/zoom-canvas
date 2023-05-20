@@ -17,6 +17,7 @@ function Todo({ x, y }: TodoProps) {
         width: initialWidth,
         minHeight: initialWidth,
       }}
+      onClick={(event) => event.stopPropagation()}
     >
       {x}, {y}
     </div>
@@ -58,6 +59,7 @@ function App() {
           console.log(q);
           setTodos((prev) => [...prev, { x: q.offsetX, y: q.offsetY }]);
           // setTodos((prev) => [...prev, { x: q.clientX, y: q.clientY }]);
+          console.log("event.target:", e.target);
         }}
         style={{ background: "lightblue", height: "auto" }}
       >
