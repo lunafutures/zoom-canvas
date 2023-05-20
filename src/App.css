@@ -11,6 +11,9 @@
 
 .AppBody {
   grid-row: body / span 1;
+  background: darkcyan;
+  height: auto;
+  color: white;
 
   /* Necessary to making absolute children relative to this container instead of the browser */
   position: relative;
@@ -25,9 +28,10 @@
 
 .TodoBox {
   position: absolute;
-  border: 1px solid red;
+  border: 1px solid;
   box-sizing: border-box;
   padding: 10px;
+  background: black;
 }
 
 .App-logo {

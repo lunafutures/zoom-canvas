@@ -61,7 +61,6 @@ function App() {
           // setTodos((prev) => [...prev, { x: q.clientX, y: q.clientY }]);
           console.log("event.target:", e.target);
         }}
-        style={{ background: "lightblue", height: "auto" }}
       >
         Body
         {todos.map((todo) => (
