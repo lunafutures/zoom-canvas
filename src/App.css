@@ -11,6 +11,9 @@
 
 .AppBody {
   grid-row: body / span 1;
+
+  /* Necessary to making absolute children relative to this instead of the browser */
+  position: relative;
 }
 
 .AppFooter {
@@ -21,8 +24,7 @@
   position: absolute;
   border: 1px solid red;
   box-sizing: border-box;
-  min-width: 50px;
-  min-height: 50px;
+  padding: 10px;
 }
 
 .App-logo {

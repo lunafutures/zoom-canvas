@@ -7,9 +7,18 @@ interface TodoProps {
   y: number;
 }
 function Todo({ x, y }: TodoProps) {
+  const initialWidth = 150;
   return (
-    <div className="TodoBox" style={{ top: x, left: y }}>
-      Box
+    <div
+      className="TodoBox"
+      style={{
+        left: x - initialWidth / 2,
+        top: y - initialWidth / 2,
+        width: initialWidth,
+        minHeight: initialWidth,
+      }}
+    >
+      {x}, {y}
     </div>
   );
 }
@@ -33,7 +42,22 @@ function App() {
             offsetX: e.nativeEvent.offsetX,
             offsetY: e.nativeEvent.offsetY,
           };
+          // console.log(q);
+        }}
+        onClick={(e) => {
+          const q = {
+            pageX: e.pageX,
+            pageY: e.pageY,
+            screenX: e.screenX,
+            screenY: e.screenY,
+            clientX: e.clientX, // Point in browser
+            clientY: e.clientY,
+            offsetX: e.nativeEvent.offsetX, // Point relative to parent
+            offsetY: e.nativeEvent.offsetY,
+          };
           console.log(q);
+          setTodos((prev) => [...prev, { x: q.offsetX, y: q.offsetY }]);
+          // setTodos((prev) => [...prev, { x: q.clientX, y: q.clientY }]);
         }}
         style={{ background: "lightblue", height: "auto" }}
       >
