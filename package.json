@@ -10,6 +10,7 @@
     "@types/node": "^16.18.31",
     "@types/react": "^18.2.6",
     "@types/react-dom": "^18.2.4",
+    "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
@@ -31,7 +32,9 @@
       "react-app/jest",
       "plugin:prettier/recommended"
     ],
-    "plugins": ["prettier"]
+    "plugins": [
+      "prettier"
+    ]
   },
   "prettier": {},
   "browserslist": {
@@ -47,6 +50,7 @@
     ]
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.194",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
     "prettier": "^2.8.8"
