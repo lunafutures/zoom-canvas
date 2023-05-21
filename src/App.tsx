@@ -9,23 +9,6 @@ interface TodoProps {
   zIndex: number;
   moveToTop: (id: number) => void;
 }
-
-interface AllTodosState {
-  todos: TodoProps[];
-  zIndexMax: number;
-  idMax: number;
-}
-interface MoveToTopAction {
-  type: "moveToTop";
-  id: number;
-}
-interface CreateAction {
-  type: "create";
-  x: number;
-  y: number;
-}
-type TodoReducerAction = MoveToTopAction | CreateAction;
-
 function Todo({ id, x, y, zIndex, moveToTop }: TodoProps) {
   const initialWidth = 150;
   return (
@@ -38,15 +21,32 @@ function Todo({ id, x, y, zIndex, moveToTop }: TodoProps) {
         minHeight: initialWidth,
         zIndex,
       }}
-      onClick={(event) => {
+      onClick={(clickEvent) => {
         moveToTop(id);
-        event.stopPropagation();
+        clickEvent.stopPropagation();
       }}
     >
       {x}, {y}
     </div>
   );
 }
+
+interface AllTodosState {
+  todos: TodoProps[];
+  zIndexMax: number;
+  idMax: number;
+}
+
+interface MoveToTopAction {
+  type: "moveToTop";
+  id: number;
+}
+interface CreateAction {
+  type: "create";
+  x: number;
+  y: number;
+}
+type TodoReducerAction = MoveToTopAction | CreateAction;
 
 function App() {
   const initialTodoState: AllTodosState = { todos: [], zIndexMax: 0, idMax: 0 };
@@ -97,19 +97,12 @@ function App() {
       <div className="AppHeader">Header</div>
       <div
         className="AppBody"
-        onClick={(e) => {
-          const q = {
-            pageX: e.pageX,
-            pageY: e.pageY,
-            screenX: e.screenX,
-            screenY: e.screenY,
-            clientX: e.clientX,
-            clientY: e.clientY,
-            offsetX: e.nativeEvent.offsetX,
-            offsetY: e.nativeEvent.offsetY,
-          };
-          console.log(q);
-          dispatchTodos({ type: "create", x: q.offsetX, y: q.offsetY });
+        onClick={(clickEvent) => {
+          dispatchTodos({
+            type: "create",
+            x: clickEvent.nativeEvent.offsetX,
+            y: clickEvent.nativeEvent.offsetY,
+          });
         }}
       >
         {todos.todos.map((todo) => (
