@@ -1,3 +1,9 @@
+:root {
+  --page-background: yellow;
+  --todo-background: darkcyan;
+  --text-color: white;
+}
+
 .App {
   display: grid;
   grid-template-rows: [header] auto [body] 1fr [footer] auto;
@@ -10,9 +16,9 @@
 
   .AppBody {
     grid-row: body / span 1;
-    background: grey;
+    background: var(--page-background);
     height: auto;
-    color: white;
+    color: var(--text-color);
 
     /* Necessary to making absolute children relative to this container instead of the browser */
     position: relative;
@@ -31,5 +37,12 @@
   border: 1px solid;
   box-sizing: border-box;
   padding: 10px;
-  background: black;
+  background: var(--todo-background);
+
+  textarea {
+    color: red;
+    background: grey;
+    border: 0px;
+    resize: none;
+  }
 }

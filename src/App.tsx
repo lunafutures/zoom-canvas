@@ -1,6 +1,6 @@
 import React from "react";
 import logo from "./logo.svg";
-import "./App.css";
+import "./App.scss";
 
 interface TodoProps {
   id: number;
@@ -10,7 +10,7 @@ interface TodoProps {
   moveToTop: (id: number) => void;
 }
 function Todo({ id, x, y, zIndex, moveToTop }: TodoProps) {
-  const initialWidth = 150;
+  const initialWidth = 200;
   return (
     <div
       className="TodoBox"
@@ -26,6 +26,7 @@ function Todo({ id, x, y, zIndex, moveToTop }: TodoProps) {
         clickEvent.stopPropagation();
       }}
     >
+      <textarea placeholder="Enter text here"></textarea>
       {x}, {y}
     </div>
   );
