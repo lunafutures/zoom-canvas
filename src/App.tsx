@@ -46,7 +46,10 @@ interface CreateAction {
   x: number;
   y: number;
 }
-type TodoReducerAction = MoveToTopAction | CreateAction;
+interface ClearAction {
+  type: "clear";
+}
+type TodoReducerAction = MoveToTopAction | CreateAction | ClearAction;
 
 function App() {
   const initialTodoState: AllTodosState = { todos: [], zIndexMax: 0, idMax: 0 };
@@ -89,12 +92,22 @@ function App() {
             },
           ],
         };
+      case "clear":
+        return {
+          idMax: 0,
+          zIndexMax: 0,
+          todos: [],
+        };
     }
   }
 
   return (
     <div className="App">
-      <div className="AppHeader">Header</div>
+      <div className="AppHeader">
+        <button onClick={() => dispatchTodos({ type: "clear" })}>
+          Clear All
+        </button>
+      </div>
       <div
         className="AppBody"
         onClick={(clickEvent) => {
