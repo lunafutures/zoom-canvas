@@ -45,7 +45,7 @@
   background: var(--todo-background);
 
   display: grid;
-  grid-template-rows: [buttons] auto 10px [text] 1fr;
+  grid-template-rows: [text] 1fr 10px [buttons] auto ;
   grid-template-columns: 1fr;
 
   textarea {
@@ -67,5 +67,10 @@
 
     display: flex;
     justify-content: space-between;
+    align-items: center;
   }
+}
+
+.btn {
+  padding: 5px 10px;
 }

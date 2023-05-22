@@ -1,6 +1,8 @@
 import React from "react";
 import logo from "./logo.svg";
 import "./App.scss";
+import { BiCheckSquare, BiTrash } from "react-icons/bi";
+import { MdOutlineDragIndicator } from "react-icons/md";
 
 interface TodoProps {
   id: number;
@@ -29,8 +31,20 @@ function Todo({ id, x, y, zIndex, moveToTop }: TodoProps) {
     >
       <textarea className="text" placeholder={placeholder}></textarea>
       <div className="buttons">
-        <button className="btn btn-success">Mark done</button>
-        <button className="btn btn-danger">Delete</button>
+        <input
+          type="checkbox"
+          value=""
+          id="checkbox1"
+          className="checkbox"
+        ></input>
+        <input type="checkbox"></input>
+        <MdOutlineDragIndicator />
+        <button className="btn btn-success">
+          <BiCheckSquare />
+        </button>
+        <button className="btn btn-danger">
+          <BiTrash />
+        </button>
       </div>
     </div>
   );
