@@ -44,10 +44,28 @@
   padding: 10px;
   background: var(--todo-background);
 
+  display: grid;
+  grid-template-rows: [buttons] auto 10px [text] 1fr;
+  grid-template-columns: 1fr;
+
   textarea {
     color: red;
     background: var(--wet-asphalt);
     border: 0px;
     resize: none;
+
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  .text {
+    grid-row: text / span 1;
+  }
+
+  .buttons {
+    grid-row: buttons / span 1;
+
+    display: flex;
+    justify-content: space-between;
   }
 }

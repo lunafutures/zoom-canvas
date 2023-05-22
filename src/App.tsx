@@ -11,6 +11,7 @@ interface TodoProps {
 }
 function Todo({ id, x, y, zIndex, moveToTop }: TodoProps) {
   const initialWidth = 200;
+  const placeholder = `${x}, ${y}`;
   return (
     <div
       className="TodoBox"
@@ -26,8 +27,11 @@ function Todo({ id, x, y, zIndex, moveToTop }: TodoProps) {
         clickEvent.stopPropagation();
       }}
     >
-      <textarea placeholder="Enter text here"></textarea>
-      {x}, {y}
+      <textarea className="text" placeholder={placeholder}></textarea>
+      <div className="buttons">
+        <button className="btn btn-success">Mark done</button>
+        <button className="btn btn-danger">Delete</button>
+      </div>
     </div>
   );
 }
