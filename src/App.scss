@@ -1,0 +1,35 @@
+.App {
+  display: grid;
+  grid-template-rows: [header] auto [body] 1fr [footer] auto;
+  grid-template-columns: 1fr;
+  height: 100vh;
+
+  .AppHeader {
+    grid-row: header / span 1;
+  }
+
+  .AppBody {
+    grid-row: body / span 1;
+    background: grey;
+    height: auto;
+    color: white;
+
+    /* Necessary to making absolute children relative to this container instead of the browser */
+    position: relative;
+
+    /* Don't let boxes appear outside of this container */
+    overflow: hidden;
+  }
+
+  .AppFooter {
+    grid-row: footer / span 1;
+  }
+}
+
+.TodoBox {
+  position: absolute;
+  border: 1px solid;
+  box-sizing: border-box;
+  padding: 10px;
+  background: black;
+}
