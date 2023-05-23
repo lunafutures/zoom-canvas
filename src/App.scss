@@ -43,6 +43,10 @@
   background: var(--todo-background);
   border: 1px solid black;
 
+  &.active {
+    border: 1px solid white;
+  }
+
   .text {
     width: 100%;
     height: 100%;

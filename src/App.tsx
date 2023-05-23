@@ -1,25 +1,21 @@
 import React from "react";
-import logo from "./logo.svg";
 import "./App.scss";
-import { BiCheckSquare, BiTrash } from "react-icons/bi";
-import { MdOutlineDragIndicator } from "react-icons/md";
 
 import TextField from "@mui/material/TextField";
-import Checkbox from "@mui/material/Checkbox";
 
 interface TodoProps {
   id: number;
   x: number;
   y: number;
   zIndex: number;
-  moveToTop: (id: number) => void;
+  isActive: boolean;
+  select: (id: number) => void;
 }
-function Todo({ id, x, y, zIndex, moveToTop }: TodoProps) {
+function Todo({ id, x, y, zIndex, isActive, select }: TodoProps) {
   const initialWidth = 200;
-  const placeholder = `${x}, ${y}`;
   return (
     <div
-      className="TodoBox"
+      className={`TodoBox ${isActive ? "active" : ""}`}
       style={{
         left: x - initialWidth / 2,
         top: y - initialWidth / 2,
@@ -28,7 +24,7 @@ function Todo({ id, x, y, zIndex, moveToTop }: TodoProps) {
         zIndex,
       }}
       onClick={(clickEvent) => {
-        moveToTop(id);
+        select(id);
         clickEvent.stopPropagation();
       }}
     >
@@ -43,8 +39,8 @@ interface AllTodosState {
   idMax: number;
 }
 
-interface MoveToTopAction {
-  type: "moveToTop";
+interface SelectAction {
+  type: "select";
   id: number;
 }
 interface CreateAction {
@@ -55,7 +51,14 @@ interface CreateAction {
 interface ClearAction {
   type: "clear";
 }
-type TodoReducerAction = MoveToTopAction | CreateAction | ClearAction;
+interface DeselectAction {
+  type: "deselect";
+}
+type TodoReducerAction =
+  | SelectAction
+  | CreateAction
+  | ClearAction
+  | DeselectAction;
 
 function App() {
   const initialTodoState: AllTodosState = { todos: [], zIndexMax: 0, idMax: 0 };
@@ -64,8 +67,14 @@ function App() {
     initialTodoState
   );
 
-  function moveToTop(id: number): void {
-    dispatchTodos({ type: "moveToTop", id });
+  function select(id: number): void {
+    dispatchTodos({ type: "select", id });
+  }
+
+  function clearActive(todos: TodoProps[]) {
+    return todos.map((todo) => {
+      return { ...todo, isActive: false };
+    });
   }
 
   function todoReducer(
@@ -74,12 +83,14 @@ function App() {
   ): AllTodosState {
     const nextZ = previous.zIndexMax + 1;
     switch (action.type) {
-      case "moveToTop":
+      case "select":
         return {
           idMax: previous.idMax,
           zIndexMax: nextZ,
-          todos: previous.todos.map((todo) =>
-            todo.id === action.id ? { ...todo, zIndex: nextZ } : todo
+          todos: clearActive(previous.todos).map((todo) =>
+            todo.id === action.id
+              ? { ...todo, zIndex: nextZ, isActive: true }
+              : todo
           ),
         };
       case "create":
@@ -88,13 +99,14 @@ function App() {
           idMax: nextId,
           zIndexMax: nextZ,
           todos: [
-            ...previous.todos,
+            ...clearActive(previous.todos),
             {
               id: nextId,
               x: action.x,
               y: action.y,
               zIndex: nextZ,
-              moveToTop: (id) => moveToTop(id),
+              isActive: true,
+              select: (id) => select(id),
             },
           ],
         };
@@ -104,6 +116,8 @@ function App() {
           zIndexMax: 0,
           todos: [],
         };
+      case "deselect":
+        return { ...previous, todos: clearActive(previous.todos) };
     }
   }
 
@@ -116,6 +130,7 @@ function App() {
       </div>
       <div
         className="AppBody"
+        onClick={() => dispatchTodos({ type: "deselect" })}
         onDoubleClick={(clickEvent) => {
           dispatchTodos({
             type: "create",
@@ -130,7 +145,8 @@ function App() {
             y={todo.y}
             zIndex={todo.zIndex}
             id={todo.id}
-            moveToTop={() => moveToTop(todo.id)}
+            isActive={todo.isActive}
+            select={() => select(todo.id)}
           />
         ))}
       </div>
