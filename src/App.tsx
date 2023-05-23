@@ -116,7 +116,7 @@ function App() {
       </div>
       <div
         className="AppBody"
-        onClick={(clickEvent) => {
+        onDoubleClick={(clickEvent) => {
           dispatchTodos({
             type: "create",
             x: clickEvent.nativeEvent.offsetX,
