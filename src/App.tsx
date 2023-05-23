@@ -4,6 +4,9 @@ import "./App.scss";
 import { BiCheckSquare, BiTrash } from "react-icons/bi";
 import { MdOutlineDragIndicator } from "react-icons/md";
 
+import TextField from "@mui/material/TextField";
+import Checkbox from "@mui/material/Checkbox";
+
 interface TodoProps {
   id: number;
   x: number;
@@ -29,23 +32,7 @@ function Todo({ id, x, y, zIndex, moveToTop }: TodoProps) {
         clickEvent.stopPropagation();
       }}
     >
-      <textarea className="text" placeholder={placeholder}></textarea>
-      <div className="buttons">
-        <input
-          type="checkbox"
-          value=""
-          id="checkbox1"
-          className="checkbox"
-        ></input>
-        <input type="checkbox"></input>
-        <MdOutlineDragIndicator />
-        <button className="btn btn-success">
-          <BiCheckSquare />
-        </button>
-        <button className="btn btn-danger">
-          <BiTrash />
-        </button>
-      </div>
+      <TextField multiline className="text" placeholder="Task description" />
     </div>
   );
 }
