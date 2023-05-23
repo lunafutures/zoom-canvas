@@ -17,10 +17,9 @@ function Todo({ id, x, y, zIndex, isActive, select }: TodoProps) {
     <div
       className={`TodoBox ${isActive ? "active" : ""}`}
       style={{
-        left: x - initialWidth / 2,
-        top: y - initialWidth / 2,
         width: initialWidth,
         minHeight: initialWidth,
+        transform: `translate(-50%, -50%) translate(${x}px, ${y}px)`,
         zIndex,
       }}
       onClick={(clickEvent) => {
