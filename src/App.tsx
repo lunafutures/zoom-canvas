@@ -137,12 +137,38 @@ function App() {
             y: clickEvent.nativeEvent.offsetY,
           });
         }}
+        // TODO for demonstration:
+        onMouseDown={(e) => {
+          if (e.buttons !== 4) {
+            return;
+          }
+          console.log("down", {
+            x: e.nativeEvent.offsetX,
+            y: e.nativeEvent.offsetY,
+          });
+        }}
+        onMouseMove={(e) => {
+          if (e.buttons !== 4) {
+            return;
+          }
+          console.log("move", {
+            x: e.nativeEvent.offsetX,
+            y: e.nativeEvent.offsetY,
+          });
+        }}
+        onMouseUp={(e) => {
+          console.log("up", {
+            x: e.nativeEvent.offsetX,
+            y: e.nativeEvent.offsetY,
+          });
+        }}
       >
         {todos.todos.map((todo) => (
           <Todo
             x={todo.x}
             y={todo.y}
             zIndex={todo.zIndex}
+            key={todo.id}
             id={todo.id}
             isActive={todo.isActive}
             select={() => select(todo.id)}
