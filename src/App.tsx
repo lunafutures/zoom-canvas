@@ -27,7 +27,12 @@ function TodoComponent({ id, x, y, zIndex, isActive, select }: TodoProps) {
         clickEvent.stopPropagation();
       }}
     >
-      <TextField multiline className="text" placeholder="Task description" />
+      <TextField
+        multiline
+        className="text"
+        placeholder="Task description"
+        spellCheck={isActive}
+      />
     </div>
   );
 }
