@@ -141,8 +141,8 @@ function TodoCollectionComponent({
     <>
       {todos.todos.map((todo) => (
         <TodoComponent
-          x={todo.x}
-          y={todo.y}
+          x={todo.x - center.x}
+          y={todo.y - center.y}
           zIndex={todo.zIndex}
           key={todo.id}
           id={todo.id}
@@ -201,7 +201,10 @@ function usePositionReducer() {
     };
   }
 
-  function positionReducer(previous: Positioning, action: PositioningAction) {
+  function positionReducer(
+    previous: Positioning,
+    action: PositioningAction
+  ): Positioning {
     switch (action.type) {
       case "start-drag":
         return calculatePosition({
@@ -209,8 +212,20 @@ function usePositionReducer() {
           startDrag: action.point,
           endDrag: action.point,
         });
+      case "update-drag":
+        return calculatePosition({
+          ...previous,
+          endDrag: action.point,
+        });
+      case "end-drag":
+        return {
+          startDrag: undefined,
+          endDrag: undefined,
+          previousCenter: previous.center,
+          center: previous.center,
+          zoom: previous.zoom,
+        };
     }
-    return previous;
   }
 
   return {
@@ -221,7 +236,8 @@ function usePositionReducer() {
 
 function CanvasComponent() {
   const { todos, dispatchTodos, select } = useTodoReducer();
-  const { position } = usePositionReducer();
+  const { position, dispatchPosition } = usePositionReducer();
+  React.useEffect(() => console.log(position.center));
 
   return (
     <div className="App">
@@ -236,34 +252,34 @@ function CanvasComponent() {
         onDoubleClick={(clickEvent) => {
           dispatchTodos({
             type: "create",
-            x: clickEvent.nativeEvent.offsetX,
-            y: clickEvent.nativeEvent.offsetY,
+            x: clickEvent.nativeEvent.offsetX + position.center.x,
+            y: clickEvent.nativeEvent.offsetY + position.center.y,
           });
         }}
-        // TODO for demonstration:
         onMouseDown={(e) => {
-          if (e.buttons !== 4) {
-            return;
-          }
-          console.log("down", {
-            x: e.nativeEvent.offsetX,
-            y: e.nativeEvent.offsetY,
+          if (e.buttons !== 4) return;
+
+          dispatchPosition({
+            type: "start-drag",
+            point: {
+              x: e.nativeEvent.offsetX,
+              y: e.nativeEvent.offsetY,
+            },
           });
         }}
         onMouseMove={(e) => {
-          if (e.buttons !== 4) {
-            return;
-          }
-          console.log("move", {
-            x: e.nativeEvent.offsetX,
-            y: e.nativeEvent.offsetY,
+          if (e.buttons !== 4) return;
+
+          dispatchPosition({
+            type: "update-drag",
+            point: {
+              x: e.nativeEvent.offsetX,
+              y: e.nativeEvent.offsetY,
+            },
           });
         }}
-        onMouseUp={(e) => {
-          console.log("up", {
-            x: e.nativeEvent.offsetX,
-            y: e.nativeEvent.offsetY,
-          });
+        onMouseUp={() => {
+          dispatchPosition({ type: "end-drag" });
         }}
       >
         <TodoCollectionComponent
