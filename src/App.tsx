@@ -32,12 +32,6 @@ function Todo({ id, x, y, zIndex, isActive, select }: TodoProps) {
   );
 }
 
-interface AllTodosState {
-  todos: TodoProps[];
-  zIndexMax: number;
-  idMax: number;
-}
-
 interface SelectAction {
   type: "select";
   id: number;
@@ -58,8 +52,12 @@ type TodoReducerAction =
   | CreateAction
   | ClearAction
   | DeselectAction;
-
-function App() {
+interface AllTodosState {
+  todos: TodoProps[];
+  zIndexMax: number;
+  idMax: number;
+}
+function useTodoReducer() {
   const initialTodoState: AllTodosState = { todos: [], zIndexMax: 0, idMax: 0 };
   const [todos, dispatchTodos] = React.useReducer(
     todoReducer,
@@ -120,6 +118,107 @@ function App() {
     }
   }
 
+  return {
+    todos,
+    dispatchTodos,
+    select,
+    clearActive,
+  };
+}
+
+type Point = { x: number; y: number };
+interface TodoCollectionProps {
+  center: Point;
+  todos: AllTodosState;
+  select: (id: number) => void;
+}
+function TodoCollection({ center, todos, select }: TodoCollectionProps) {
+  return (
+    <>
+      {todos.todos.map((todo) => (
+        <Todo
+          x={todo.x}
+          y={todo.y}
+          zIndex={todo.zIndex}
+          key={todo.id}
+          id={todo.id}
+          isActive={todo.isActive}
+          select={() => select(todo.id)}
+        />
+      ))}
+    </>
+  );
+}
+
+interface StartDrag {
+  type: "start-drag";
+  point: Point;
+}
+interface UpdateDrag {
+  type: "update-drag";
+  point: Point;
+}
+interface EndDrag {
+  type: "end-drag";
+}
+type PositioningAction = StartDrag | UpdateDrag | EndDrag;
+interface Positioning {
+  startDrag?: Point;
+  endDrag?: Point;
+  previousCenter: Point;
+
+  center: Point;
+  zoom: number;
+}
+
+function usePositionReducer() {
+  const initialPosition: Positioning = {
+    startDrag: undefined,
+    endDrag: undefined,
+    previousCenter: { x: 0, y: 0 },
+    center: { x: 0, y: 0 },
+    zoom: 1,
+  };
+  const [position, dispatchPosition] = React.useReducer(
+    positionReducer,
+    initialPosition
+  );
+
+  function calculatePosition(before: Positioning): Positioning {
+    if (before.startDrag === undefined || before.endDrag === undefined) {
+      return before;
+    }
+    return {
+      ...before,
+      center: {
+        x: before.previousCenter.x + (before.startDrag.x - before.endDrag.x),
+        y: before.previousCenter.y + (before.startDrag.y - before.endDrag.y),
+      },
+    };
+  }
+
+  function positionReducer(previous: Positioning, action: PositioningAction) {
+    switch (action.type) {
+      case "start-drag":
+        return calculatePosition({
+          ...previous,
+          startDrag: action.point,
+          endDrag: action.point,
+        });
+    }
+    return previous;
+  }
+
+  return {
+    position,
+    dispatchPosition,
+  };
+}
+
+function Canvas() {
+  const { todos, dispatchTodos, select } = useTodoReducer();
+  const { position } = usePositionReducer();
+
   return (
     <div className="App">
       <div className="AppHeader">
@@ -163,21 +262,19 @@ function App() {
           });
         }}
       >
-        {todos.todos.map((todo) => (
-          <Todo
-            x={todo.x}
-            y={todo.y}
-            zIndex={todo.zIndex}
-            key={todo.id}
-            id={todo.id}
-            isActive={todo.isActive}
-            select={() => select(todo.id)}
-          />
-        ))}
+        <TodoCollection
+          center={position.center}
+          todos={todos}
+          select={select}
+        />
       </div>
       <div className="AppFooter">Footer</div>
     </div>
   );
+}
+
+function App() {
+  return <Canvas />;
 }
 
 export default App;
