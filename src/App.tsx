@@ -237,7 +237,6 @@ function usePositionReducer() {
 function CanvasComponent() {
   const { todos, dispatchTodos, select } = useTodoReducer();
   const { position, dispatchPosition } = usePositionReducer();
-  React.useEffect(() => console.log(position.center));
 
   return (
     <div className="App">
@@ -262,8 +261,10 @@ function CanvasComponent() {
           dispatchPosition({
             type: "start-drag",
             point: {
-              x: e.nativeEvent.offsetX,
-              y: e.nativeEvent.offsetY,
+              // Use clientX instead of nativeEvent.offsetX so that if you mouse over a child element,
+              // the value won't suddenly shift (offsetX is relative to the child, clientX is global for all elements)
+              x: e.clientX,
+              y: e.clientY,
             },
           });
         }}
@@ -273,8 +274,8 @@ function CanvasComponent() {
           dispatchPosition({
             type: "update-drag",
             point: {
-              x: e.nativeEvent.offsetX,
-              y: e.nativeEvent.offsetY,
+              x: e.clientX,
+              y: e.clientY,
             },
           });
         }}
