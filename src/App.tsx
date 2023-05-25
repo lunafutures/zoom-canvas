@@ -11,7 +11,7 @@ interface TodoProps {
   isActive: boolean;
   select: (id: number) => void;
 }
-function Todo({ id, x, y, zIndex, isActive, select }: TodoProps) {
+function TodoComponent({ id, x, y, zIndex, isActive, select }: TodoProps) {
   const initialWidth = 200;
   return (
     <div
@@ -132,11 +132,15 @@ interface TodoCollectionProps {
   todos: AllTodosState;
   select: (id: number) => void;
 }
-function TodoCollection({ center, todos, select }: TodoCollectionProps) {
+function TodoCollectionComponent({
+  center,
+  todos,
+  select,
+}: TodoCollectionProps) {
   return (
     <>
       {todos.todos.map((todo) => (
-        <Todo
+        <TodoComponent
           x={todo.x}
           y={todo.y}
           zIndex={todo.zIndex}
@@ -215,7 +219,7 @@ function usePositionReducer() {
   };
 }
 
-function Canvas() {
+function CanvasComponent() {
   const { todos, dispatchTodos, select } = useTodoReducer();
   const { position } = usePositionReducer();
 
@@ -262,7 +266,7 @@ function Canvas() {
           });
         }}
       >
-        <TodoCollection
+        <TodoCollectionComponent
           center={position.center}
           todos={todos}
           select={select}
@@ -274,7 +278,7 @@ function Canvas() {
 }
 
 function App() {
-  return <Canvas />;
+  return <CanvasComponent />;
 }
 
 export default App;
