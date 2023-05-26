@@ -52,11 +52,15 @@ interface ClearAction {
 interface DeselectAction {
   type: "deselect";
 }
+interface DeleteActiveAction {
+  type: "delete-active";
+}
 type TodoReducerAction =
   | SelectAction
   | CreateAction
   | ClearAction
-  | DeselectAction;
+  | DeselectAction
+  | DeleteActiveAction;
 interface AllTodosState {
   todos: TodoProps[];
   zIndexMax: number;
@@ -120,6 +124,11 @@ function useTodoReducer() {
         };
       case "deselect":
         return { ...previous, todos: clearActive(previous.todos) };
+      case "delete-active":
+        return {
+          ...previous,
+          todos: previous.todos.filter((todo) => !todo.isActive),
+        };
     }
   }
 
@@ -179,8 +188,7 @@ interface Positioning {
   center: Point;
   zoom: number;
 }
-
-function usePositionReducer() {
+function useCanvasPositionReducer() {
   const initialPosition: Positioning = {
     startDrag: undefined,
     endDrag: undefined,
@@ -241,7 +249,21 @@ function usePositionReducer() {
 
 function CanvasComponent() {
   const { todos, dispatchTodos, select } = useTodoReducer();
-  const { position, dispatchPosition } = usePositionReducer();
+  const { position, dispatchPosition } = useCanvasPositionReducer();
+
+  React.useEffect(() => {
+    function documentKeyListener(e: KeyboardEvent) {
+      if (e.key === "Delete") {
+        // TODO: Shouldn't be called if in textarea
+        dispatchTodos({ type: "delete-active" });
+      }
+    }
+    document.addEventListener("keyup", documentKeyListener);
+
+    return () => {
+      document.removeEventListener("keyup", documentKeyListener);
+    };
+  });
 
   return (
     <div className="App">
