@@ -1,3 +1,4 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import React from "react";
 import "./App.scss";
 
@@ -323,7 +324,14 @@ function CanvasComponent() {
 }
 
 function App() {
-  return <CanvasComponent />;
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/demo" element={<button>hi</button>} />
+        <Route path="/" element={<CanvasComponent />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 export default App;
