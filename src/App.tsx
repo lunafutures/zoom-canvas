@@ -29,6 +29,10 @@ function TodoComponent({ id, x, y, zIndex, isActive, select }: TodoProps) {
       }}
     >
       <TextField
+        onKeyDown={(e) => {
+          // Prevents the delete key from deleting the note while editing text
+          e.stopPropagation();
+        }}
         multiline
         className="text"
         placeholder="Task description"
@@ -255,14 +259,13 @@ function CanvasComponent() {
   React.useEffect(() => {
     function documentKeyListener(e: KeyboardEvent) {
       if (e.key === "Delete") {
-        // TODO: Shouldn't be called if in textarea
         dispatchTodos({ type: "delete-active" });
       }
     }
-    document.addEventListener("keyup", documentKeyListener);
+    document.addEventListener("keydown", documentKeyListener);
 
     return () => {
-      document.removeEventListener("keyup", documentKeyListener);
+      document.removeEventListener("keydown", documentKeyListener);
     };
   });
 
