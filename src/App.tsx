@@ -131,27 +131,6 @@ function useTodoReducer() {
     });
   }
 
-  function calculatePosition(before: AllTodosState): AllTodosState {
-    if (before.delta === undefined) {
-      return before;
-    }
-
-    const bd = before.delta;
-    const newPosition = {
-      x: bd.previousPosition.x + (bd.startDrag.x - bd.endDrag.x),
-      y: bd.previousPosition.y + (bd.startDrag.y - bd.endDrag.y),
-    };
-
-    return {
-      ...before,
-      delta: {
-        ...before.delta,
-        newPosition,
-      },
-      center: newPosition,
-    };
-  }
-
   function updateDrag(endDrag: Point, previous: AllTodosState): AllTodosState {
     if (previous.delta === undefined) {
       return previous;
