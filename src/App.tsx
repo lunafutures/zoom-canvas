@@ -6,6 +6,9 @@ import TextField from "@mui/material/TextField";
 import _ from "lodash";
 
 type Point = { x: number; y: number };
+const DispatchTodosContext = React.createContext<
+  (value: TodoReducerAction) => void
+>(undefined as any);
 
 interface TodoProps {
   id: number;
@@ -17,6 +20,7 @@ interface TodoProps {
 }
 function TodoComponent({ id, x, y, zIndex, isActive, select }: TodoProps) {
   const initialWidth = 200;
+  const dispatchTodos = React.useContext(DispatchTodosContext);
   return (
     <div
       className={`TodoBox ${isActive ? "active" : ""}`}
@@ -32,11 +36,12 @@ function TodoComponent({ id, x, y, zIndex, isActive, select }: TodoProps) {
       }}
       onMouseDown={(e) => {
         if (e.buttons !== 1) return;
-        console.log(id, e.clientX);
-      }}
-      onMouseMove={(e) => {
-        if (e.buttons !== 1) return;
-        console.log("move", id, e.clientX, e.clientY);
+        select(id);
+        dispatchTodos({
+          type: "start-drag",
+          itemUnderDrag: id,
+          point: { x, y },
+        });
       }}
     >
       <TextField
@@ -78,7 +83,6 @@ interface StartDrag {
 }
 interface UpdateDrag {
   type: "update-drag";
-  itemUnderDrag: number | "pan";
   point: Point;
 }
 interface EndDrag {
@@ -139,9 +143,9 @@ function useTodoReducer() {
     const startDrag = previous.delta.startDrag;
     const delta = subtractPoints(startDrag, endDrag);
     const previousPosition = previous.delta.previousPosition;
-    const newPosition = addPoints(previousPosition, delta);
 
     if (previous.delta?.itemUnderDrag === "pan") {
+      const newPosition = addPoints(previousPosition, delta);
       return {
         ...previous,
         delta: {
@@ -154,6 +158,7 @@ function useTodoReducer() {
         center: newPosition,
       };
     } else {
+      const newPosition = subtractPoints(previousPosition, delta);
       return {
         ...previous,
         delta: {
@@ -163,7 +168,17 @@ function useTodoReducer() {
           newPosition,
           itemUnderDrag: previous.delta.itemUnderDrag,
         },
-        center: newPosition,
+        todos: previous.todos.map((todo) => {
+          if (todo.id !== previous.delta?.itemUnderDrag) {
+            return todo;
+          } else {
+            return {
+              ...todo,
+              x: newPosition.x,
+              y: newPosition.y,
+            };
+          }
+        }),
       };
     }
   }
@@ -348,26 +363,27 @@ function CanvasComponent() {
           });
         }}
         onMouseMove={(e) => {
-          if (e.buttons !== 4) return;
-
-          dispatchTodos({
-            type: "update-drag",
-            itemUnderDrag: "pan",
-            point: {
-              x: e.clientX,
-              y: e.clientY,
-            },
-          });
+          if (e.buttons === 4 || e.buttons === 1) {
+            dispatchTodos({
+              type: "update-drag",
+              point: {
+                x: e.clientX,
+                y: e.clientY,
+              },
+            });
+          }
         }}
         onMouseUp={() => {
           dispatchTodos({ type: "end-drag" });
         }}
       >
-        <TodoCollectionComponent
-          center={todos.center}
-          todos={todos}
-          select={select}
-        />
+        <DispatchTodosContext.Provider value={dispatchTodos}>
+          <TodoCollectionComponent
+            center={todos.center}
+            todos={todos}
+            select={select}
+          />
+        </DispatchTodosContext.Provider>
       </div>
       <div className="AppFooter">Footer</div>
     </div>
