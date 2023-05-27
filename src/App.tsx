@@ -191,7 +191,6 @@ interface Positioning {
   previousCenter: Point;
 
   center: Point;
-  zoom: number;
 }
 function useCanvasPositionReducer() {
   const initialPosition: Positioning = {
@@ -199,7 +198,6 @@ function useCanvasPositionReducer() {
     endDrag: undefined,
     previousCenter: { x: 0, y: 0 },
     center: { x: 0, y: 0 },
-    zoom: 1,
   };
   const [position, dispatchPosition] = React.useReducer(
     positionReducer,
@@ -241,7 +239,6 @@ function useCanvasPositionReducer() {
           endDrag: undefined,
           previousCenter: previous.center,
           center: previous.center,
-          zoom: previous.zoom,
         };
     }
   }
