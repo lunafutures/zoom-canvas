@@ -23,9 +23,9 @@ function TodoComponent({ id, x, y, zIndex, isActive, select }: TodoProps) {
         transform: `translate(-50%, -50%) translate(${x}px, ${y}px)`,
         zIndex,
       }}
-      onClick={(clickEvent) => {
+      onClick={(e) => {
         select(id);
-        clickEvent.stopPropagation();
+        e.stopPropagation();
       }}
     >
       <TextField
@@ -276,12 +276,12 @@ function CanvasComponent() {
       <div
         className="AppBody"
         onClick={() => dispatchTodos({ type: "deselect" })}
-        onDoubleClick={(clickEvent) => {
-          if (clickEvent.currentTarget !== clickEvent.target) return;
+        onDoubleClick={(e) => {
+          if (e.currentTarget !== e.target) return;
           dispatchTodos({
             type: "create",
-            x: clickEvent.nativeEvent.offsetX + position.center.x,
-            y: clickEvent.nativeEvent.offsetY + position.center.y,
+            x: e.nativeEvent.offsetX + position.center.x,
+            y: e.nativeEvent.offsetY + position.center.y,
           });
         }}
         onMouseDown={(e) => {
