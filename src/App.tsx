@@ -3,6 +3,9 @@ import React from "react";
 import "./App.scss";
 
 import TextField from "@mui/material/TextField";
+import _ from "lodash";
+
+type Point = { x: number; y: number };
 
 interface TodoProps {
   id: number;
@@ -26,6 +29,14 @@ function TodoComponent({ id, x, y, zIndex, isActive, select }: TodoProps) {
       onClick={(e) => {
         select(id);
         e.stopPropagation();
+      }}
+      onMouseDown={(e) => {
+        if (e.buttons !== 1) return;
+        console.log(id, e.clientX);
+      }}
+      onMouseMove={(e) => {
+        if (e.buttons !== 1) return;
+        console.log("move", id, e.clientX, e.clientY);
       }}
     >
       <TextField
@@ -60,19 +71,51 @@ interface DeselectAction {
 interface DeleteActiveAction {
   type: "delete-active";
 }
+interface StartDrag {
+  type: "start-drag";
+  itemUnderDrag: number | "pan";
+  point: Point;
+}
+interface UpdateDrag {
+  type: "update-drag";
+  itemUnderDrag: number | "pan";
+  point: Point;
+}
+interface EndDrag {
+  type: "end-drag";
+}
 type TodoReducerAction =
   | SelectAction
   | CreateAction
   | ClearAction
   | DeselectAction
-  | DeleteActiveAction;
+  | DeleteActiveAction
+  | StartDrag
+  | UpdateDrag
+  | EndDrag;
+
+interface Delta {
+  startDrag: Point;
+  endDrag: Point;
+  previousPosition: Point;
+  newPosition: Point;
+  itemUnderDrag: number | "pan";
+}
 interface AllTodosState {
   todos: TodoProps[];
   zIndexMax: number;
   idMax: number;
+  delta?: Delta;
+  center: Point;
 }
 function useTodoReducer() {
-  const initialTodoState: AllTodosState = { todos: [], zIndexMax: 0, idMax: 0 };
+  const initialTodoState: AllTodosState = {
+    todos: [],
+    zIndexMax: 0,
+    idMax: 0,
+    delta: undefined,
+    center: { x: 0, y: 0 },
+  };
   const [todos, dispatchTodos] = React.useReducer(
     todoReducer,
     initialTodoState
@@ -88,6 +131,82 @@ function useTodoReducer() {
     });
   }
 
+  function calculatePosition(before: AllTodosState): AllTodosState {
+    if (before.delta === undefined) {
+      return before;
+    }
+
+    const bd = before.delta;
+    const newPosition = {
+      x: bd.previousPosition.x + (bd.startDrag.x - bd.endDrag.x),
+      y: bd.previousPosition.y + (bd.startDrag.y - bd.endDrag.y),
+    };
+
+    return {
+      ...before,
+      delta: {
+        ...before.delta,
+        newPosition,
+      },
+      center: newPosition,
+    };
+  }
+
+  function updateDrag(endDrag: Point, previous: AllTodosState): AllTodosState {
+    if (previous.delta === undefined) {
+      return previous;
+    }
+
+    const startDrag = previous.delta.startDrag;
+    const delta = subtractPoints(startDrag, endDrag);
+    const previousPosition = previous.delta.previousPosition;
+    const newPosition = addPoints(previousPosition, delta);
+
+    if (previous.delta?.itemUnderDrag === "pan") {
+      return {
+        ...previous,
+        delta: {
+          startDrag,
+          endDrag,
+          previousPosition,
+          newPosition,
+          itemUnderDrag: previous.delta.itemUnderDrag,
+        },
+        center: newPosition,
+      };
+    } else {
+      return {
+        ...previous,
+        delta: {
+          startDrag,
+          endDrag,
+          previousPosition,
+          newPosition,
+          itemUnderDrag: previous.delta.itemUnderDrag,
+        },
+        center: newPosition,
+      };
+    }
+  }
+
+  function addPoints(point1: Point, point2: Point): Point {
+    return {
+      x: point1.x + point2.x,
+      y: point1.y + point2.y,
+    };
+  }
+
+  function subtractPoints(point1: Point, point2: Point): Point {
+    return {
+      x: point1.x - point2.x,
+      y: point1.y - point2.y,
+    };
+  }
+
+  function itemToPoint(todo: TodoProps): Point {
+    return { x: todo.x, y: todo.y };
+  }
+
   function todoReducer(
     previous: AllTodosState,
     action: TodoReducerAction
@@ -96,6 +215,7 @@ function useTodoReducer() {
     switch (action.type) {
       case "select":
         return {
+          ...previous,
           idMax: previous.idMax,
           zIndexMax: nextZ,
           todos: clearActive(previous.todos).map((todo) =>
@@ -107,6 +227,7 @@ function useTodoReducer() {
       case "create":
         const nextId = previous.idMax + 1;
         return {
+          ...previous,
           idMax: nextId,
           zIndexMax: nextZ,
           todos: [
@@ -123,6 +244,7 @@ function useTodoReducer() {
         };
       case "clear":
         return {
+          ...previous,
           idMax: 0,
           zIndexMax: 0,
           todos: [],
@@ -134,6 +256,32 @@ function useTodoReducer() {
           ...previous,
           todos: previous.todos.filter((todo) => !todo.isActive),
         };
+
+      case "start-drag":
+        const startPosition =
+          action.itemUnderDrag === "pan"
+            ? previous.center
+            : itemToPoint(
+                _.find(
+                  previous.todos,
+                  (todo) => todo.id === action.itemUnderDrag
+                )!
+              );
+
+        return {
+          ...previous,
+          delta: {
+            itemUnderDrag: action.itemUnderDrag,
+            startDrag: action.point,
+            endDrag: action.point,
+            previousPosition: startPosition,
+            newPosition: startPosition,
+          },
+        };
+      case "update-drag":
+        return updateDrag(action.point, previous);
+      case "end-drag": // TODO
+        return { ...previous, delta: undefined };
     }
   }
 
@@ -145,7 +293,6 @@ function useTodoReducer() {
   };
 }
 
-type Point = { x: number; y: number };
 interface TodoCollectionProps {
   center: Point;
   todos: AllTodosState;
@@ -173,85 +320,8 @@ function TodoCollectionComponent({
   );
 }
 
-interface StartDrag {
-  type: "start-drag";
-  point: Point;
-}
-interface UpdateDrag {
-  type: "update-drag";
-  point: Point;
-}
-interface EndDrag {
-  type: "end-drag";
-}
-type PositioningAction = StartDrag | UpdateDrag | EndDrag;
-interface Positioning {
-  startDrag?: Point;
-  endDrag?: Point;
-  previousCenter: Point;
-
-  center: Point;
-}
-function useCanvasPositionReducer() {
-  const initialPosition: Positioning = {
-    startDrag: undefined,
-    endDrag: undefined,
-    previousCenter: { x: 0, y: 0 },
-    center: { x: 0, y: 0 },
-  };
-  const [position, dispatchPosition] = React.useReducer(
-    positionReducer,
-    initialPosition
-  );
-
-  function calculatePosition(before: Positioning): Positioning {
-    if (before.startDrag === undefined || before.endDrag === undefined) {
-      return before;
-    }
-    return {
-      ...before,
-      center: {
-        x: before.previousCenter.x + (before.startDrag.x - before.endDrag.x),
-        y: before.previousCenter.y + (before.startDrag.y - before.endDrag.y),
-      },
-    };
-  }
-
-  function positionReducer(
-    previous: Positioning,
-    action: PositioningAction
-  ): Positioning {
-    switch (action.type) {
-      case "start-drag":
-        return calculatePosition({
-          ...previous,
-          startDrag: action.point,
-          endDrag: action.point,
-        });
-      case "update-drag":
-        return calculatePosition({
-          ...previous,
-          endDrag: action.point,
-        });
-      case "end-drag":
-        return {
-          startDrag: undefined,
-          endDrag: undefined,
-          previousCenter: previous.center,
-          center: previous.center,
-        };
-    }
-  }
-
-  return {
-    position,
-    dispatchPosition,
-  };
-}
-
 function CanvasComponent() {
   const { todos, dispatchTodos, select } = useTodoReducer();
-  const { position, dispatchPosition } = useCanvasPositionReducer();
 
   React.useEffect(() => {
     function documentKeyListener(e: KeyboardEvent) {
@@ -280,15 +350,16 @@ function CanvasComponent() {
           if (e.currentTarget !== e.target) return;
           dispatchTodos({
             type: "create",
-            x: e.nativeEvent.offsetX + position.center.x,
-            y: e.nativeEvent.offsetY + position.center.y,
+            x: e.nativeEvent.offsetX + todos.center.x,
+            y: e.nativeEvent.offsetY + todos.center.y,
           });
         }}
         onMouseDown={(e) => {
           if (e.buttons !== 4) return;
 
-          dispatchPosition({
+          dispatchTodos({
             type: "start-drag",
+            itemUnderDrag: "pan",
             point: {
               // Use clientX instead of nativeEvent.offsetX so that if you mouse over a child element,
               // the value won't suddenly shift (offsetX is relative to the child, clientX is global for all elements)
@@ -300,8 +371,9 @@ function CanvasComponent() {
         onMouseMove={(e) => {
           if (e.buttons !== 4) return;
 
-          dispatchPosition({
+          dispatchTodos({
             type: "update-drag",
+            itemUnderDrag: "pan",
             point: {
               x: e.clientX,
               y: e.clientY,
@@ -309,11 +381,11 @@ function CanvasComponent() {
           });
         }}
         onMouseUp={() => {
-          dispatchPosition({ type: "end-drag" });
+          dispatchTodos({ type: "end-drag" });
         }}
       >
         <TodoCollectionComponent
-          center={position.center}
+          center={todos.center}
           todos={todos}
           select={select}
         />
