@@ -79,16 +79,16 @@ interface DeselectAction {
 interface DeleteActiveAction {
   type: "delete-active";
 }
-interface StartDrag {
+interface StartDragAction {
   type: "start-drag";
   itemUnderDrag: number | "pan";
   point: Point;
 }
-interface UpdateDrag {
+interface UpdateDragAction {
   type: "update-drag";
   point: Point;
 }
-interface EndDrag {
+interface EndDragAction {
   type: "end-drag";
 }
 type NoteReducerAction =
@@ -97,9 +97,9 @@ type NoteReducerAction =
   | ClearAction
   | DeselectAction
   | DeleteActiveAction
-  | StartDrag
-  | UpdateDrag
-  | EndDrag;
+  | StartDragAction
+  | UpdateDragAction
+  | EndDragAction;
 
 interface Delta {
   startDrag: Point;
@@ -125,8 +125,16 @@ function useNoteReducer() {
   };
   const [notes, dispatchNotes] = React.useReducer(
     noteReducer,
-    initialNoteState
+    undefined,
+    () => {
+      const item = localStorage.getItem("notes");
+      return item ? (JSON.parse(item) as AllNotesState) : initialNoteState;
+    }
   );
+
+  React.useEffect(() => {
+    localStorage.setItem("notes", JSON.stringify(notes));
+  });
 
   function select(id: number): void {
     dispatchNotes({ type: "select", id });
