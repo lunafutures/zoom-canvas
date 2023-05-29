@@ -4,7 +4,7 @@
   --peter-river: #3498db;
 
   --page-background: var(--midnight-blue);
-  --todo-background: var(--peter-river);
+  --note-background: var(--peter-river);
   --text-color: white;
 }
 
@@ -36,11 +36,11 @@
   }
 }
 
-.TodoBox {
+.NoteBox {
   position: absolute;
   box-sizing: border-box;
   padding: 10px;
-  background: var(--todo-background);
+  background: var(--note-background);
   border: 1px solid black;
 
   &.active {

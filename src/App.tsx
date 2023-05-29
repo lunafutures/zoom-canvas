@@ -6,11 +6,11 @@ import TextField from "@mui/material/TextField";
 import _ from "lodash";
 
 type Point = { x: number; y: number };
-const DispatchTodosContext = React.createContext<
-  (value: TodoReducerAction) => void
+const DispatchNotesContext = React.createContext<
+  (value: NoteReducerAction) => void
 >(undefined as any);
 
-interface TodoProps {
+interface NoteProps {
   id: number;
   x: number;
   y: number;
@@ -18,13 +18,13 @@ interface TodoProps {
   isActive: boolean;
   select: (id: number) => void;
 }
-function TodoComponent({ id, x, y, zIndex, isActive, select }: TodoProps) {
+function NoteComponent({ id, x, y, zIndex, isActive, select }: NoteProps) {
   const initialWidth = 200;
-  const dispatchTodos = React.useContext(DispatchTodosContext);
+  const dispatchNotes = React.useContext(DispatchNotesContext);
 
   return (
     <div
-      className={`TodoBox ${isActive ? "active" : ""}`}
+      className={`NoteBox ${isActive ? "active" : ""}`}
       style={{
         width: initialWidth,
         minHeight: initialWidth,
@@ -38,7 +38,7 @@ function TodoComponent({ id, x, y, zIndex, isActive, select }: TodoProps) {
       onMouseDown={(e) => {
         if (e.buttons !== 1) return;
         select(id);
-        dispatchTodos({
+        dispatchNotes({
           type: "start-drag",
           itemUnderDrag: id,
           point: { x, y },
@@ -91,7 +91,7 @@ interface UpdateDrag {
 interface EndDrag {
   type: "end-drag";
 }
-type TodoReducerAction =
+type NoteReducerAction =
   | SelectAction
   | CreateAction
   | ClearAction
@@ -108,37 +108,37 @@ interface Delta {
   newPosition: Point;
   itemUnderDrag: number | "pan";
 }
-interface AllTodosState {
-  todos: TodoProps[];
+interface AllNotesState {
+  notes: NoteProps[];
   zIndexMax: number;
   idMax: number;
   delta?: Delta;
   center: Point;
 }
-function useTodoReducer() {
-  const initialTodoState: AllTodosState = {
-    todos: [],
+function useNoteReducer() {
+  const initialNoteState: AllNotesState = {
+    notes: [],
     zIndexMax: 0,
     idMax: 0,
     delta: undefined,
     center: { x: 0, y: 0 },
   };
-  const [todos, dispatchTodos] = React.useReducer(
-    todoReducer,
-    initialTodoState
+  const [notes, dispatchNotes] = React.useReducer(
+    noteReducer,
+    initialNoteState
   );
 
   function select(id: number): void {
-    dispatchTodos({ type: "select", id });
+    dispatchNotes({ type: "select", id });
   }
 
-  function clearActive(todos: TodoProps[]) {
-    return todos.map((todo) => {
-      return { ...todo, isActive: false };
+  function clearActive(notes: NoteProps[]) {
+    return notes.map((note) => {
+      return { ...note, isActive: false };
     });
   }
 
-  function updateDrag(endDrag: Point, previous: AllTodosState): AllTodosState {
+  function updateDrag(endDrag: Point, previous: AllNotesState): AllNotesState {
     if (previous.delta === undefined) {
       return previous;
     }
@@ -171,12 +171,12 @@ function useTodoReducer() {
           newPosition,
           itemUnderDrag: previous.delta.itemUnderDrag,
         },
-        todos: previous.todos.map((todo) => {
-          if (todo.id !== previous.delta?.itemUnderDrag) {
-            return todo;
+        notes: previous.notes.map((note) => {
+          if (note.id !== previous.delta?.itemUnderDrag) {
+            return note;
           } else {
             return {
-              ...todo,
+              ...note,
               x: newPosition.x,
               y: newPosition.y,
             };
@@ -200,14 +200,14 @@ function useTodoReducer() {
     };
   }
 
-  function itemToPoint(todo: TodoProps): Point {
-    return { x: todo.x, y: todo.y };
+  function itemToPoint(note: NoteProps): Point {
+    return { x: note.x, y: note.y };
   }
 
-  function todoReducer(
-    previous: AllTodosState,
-    action: TodoReducerAction
-  ): AllTodosState {
+  function noteReducer(
+    previous: AllNotesState,
+    action: NoteReducerAction
+  ): AllNotesState {
     const nextZ = previous.zIndexMax + 1;
     switch (action.type) {
       case "select":
@@ -215,10 +215,10 @@ function useTodoReducer() {
           ...previous,
           idMax: previous.idMax,
           zIndexMax: nextZ,
-          todos: clearActive(previous.todos).map((todo) =>
-            todo.id === action.id
-              ? { ...todo, zIndex: nextZ, isActive: true }
-              : todo
+          notes: clearActive(previous.notes).map((note) =>
+            note.id === action.id
+              ? { ...note, zIndex: nextZ, isActive: true }
+              : note
           ),
         };
       case "create":
@@ -227,8 +227,8 @@ function useTodoReducer() {
           ...previous,
           idMax: nextId,
           zIndexMax: nextZ,
-          todos: [
-            ...clearActive(previous.todos),
+          notes: [
+            ...clearActive(previous.notes),
             {
               id: nextId,
               x: action.x,
@@ -244,14 +244,14 @@ function useTodoReducer() {
           ...previous,
           idMax: 0,
           zIndexMax: 0,
-          todos: [],
+          notes: [],
         };
       case "deselect":
-        return { ...previous, todos: clearActive(previous.todos) };
+        return { ...previous, notes: clearActive(previous.notes) };
       case "delete-active":
         return {
           ...previous,
-          todos: previous.todos.filter((todo) => !todo.isActive),
+          notes: previous.notes.filter((note) => !note.isActive),
         };
 
       case "start-drag":
@@ -260,8 +260,8 @@ function useTodoReducer() {
             ? previous.center
             : itemToPoint(
                 _.find(
-                  previous.todos,
-                  (todo) => todo.id === action.itemUnderDrag
+                  previous.notes,
+                  (note) => note.id === action.itemUnderDrag
                 )!
               );
 
@@ -283,34 +283,34 @@ function useTodoReducer() {
   }
 
   return {
-    todos,
-    dispatchTodos,
+    notes,
+    dispatchNotes,
     select,
     clearActive,
   };
 }
 
-interface TodoCollectionProps {
+interface NoteCollectionProps {
   center: Point;
-  todos: AllTodosState;
+  notes: AllNotesState;
   select: (id: number) => void;
 }
-function TodoCollectionComponent({
+function NoteCollectionComponent({
   center,
-  todos,
+  notes,
   select,
-}: TodoCollectionProps) {
+}: NoteCollectionProps) {
   return (
     <>
-      {todos.todos.map((todo) => (
-        <TodoComponent
-          x={todo.x - center.x}
-          y={todo.y - center.y}
-          zIndex={todo.zIndex}
-          key={todo.id}
-          id={todo.id}
-          isActive={todo.isActive}
-          select={() => select(todo.id)}
+      {notes.notes.map((note) => (
+        <NoteComponent
+          x={note.x - center.x}
+          y={note.y - center.y}
+          zIndex={note.zIndex}
+          key={note.id}
+          id={note.id}
+          isActive={note.isActive}
+          select={() => select(note.id)}
         />
       ))}
     </>
@@ -318,12 +318,12 @@ function TodoCollectionComponent({
 }
 
 function CanvasComponent() {
-  const { todos, dispatchTodos, select } = useTodoReducer();
+  const { notes, dispatchNotes, select } = useNoteReducer();
 
   React.useEffect(() => {
     function documentKeyListener(e: KeyboardEvent) {
       if (e.key === "Delete") {
-        dispatchTodos({ type: "delete-active" });
+        dispatchNotes({ type: "delete-active" });
       }
     }
     document.addEventListener("keydown", documentKeyListener);
@@ -336,25 +336,25 @@ function CanvasComponent() {
   return (
     <div className="App">
       <div className="AppHeader">
-        <button onClick={() => dispatchTodos({ type: "clear" })}>
+        <button onClick={() => dispatchNotes({ type: "clear" })}>
           Clear All
         </button>
       </div>
       <div
         className="AppBody"
-        onClick={() => dispatchTodos({ type: "deselect" })}
+        onClick={() => dispatchNotes({ type: "deselect" })}
         onDoubleClick={(e) => {
           if (e.currentTarget !== e.target) return;
-          dispatchTodos({
+          dispatchNotes({
             type: "create",
-            x: e.nativeEvent.offsetX + todos.center.x,
-            y: e.nativeEvent.offsetY + todos.center.y,
+            x: e.nativeEvent.offsetX + notes.center.x,
+            y: e.nativeEvent.offsetY + notes.center.y,
           });
         }}
         onMouseDown={(e) => {
           if (e.buttons !== 4) return;
 
-          dispatchTodos({
+          dispatchNotes({
             type: "start-drag",
             itemUnderDrag: "pan",
             point: {
@@ -367,7 +367,7 @@ function CanvasComponent() {
         }}
         onMouseMove={(e) => {
           if (e.buttons === 4 || e.buttons === 1) {
-            dispatchTodos({
+            dispatchNotes({
               type: "update-drag",
               point: {
                 x: e.clientX,
@@ -377,16 +377,16 @@ function CanvasComponent() {
           }
         }}
         onMouseUp={() => {
-          dispatchTodos({ type: "end-drag" });
+          dispatchNotes({ type: "end-drag" });
         }}
       >
-        <DispatchTodosContext.Provider value={dispatchTodos}>
-          <TodoCollectionComponent
-            center={todos.center}
-            todos={todos}
+        <DispatchNotesContext.Provider value={dispatchNotes}>
+          <NoteCollectionComponent
+            center={notes.center}
+            notes={notes}
             select={select}
           />
-        </DispatchTodosContext.Provider>
+        </DispatchNotesContext.Provider>
       </div>
       <div className="AppFooter">Footer</div>
     </div>
