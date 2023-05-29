@@ -49,6 +49,7 @@ function TodoComponent({ id, x, y, zIndex, isActive, select }: TodoProps) {
           // Prevents the delete key from deleting the note while editing text
           e.stopPropagation();
         }}
+        autoFocus
         multiline
         className="text"
         placeholder="Task description"
