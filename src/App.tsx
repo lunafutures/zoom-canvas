@@ -21,6 +21,7 @@ interface TodoProps {
 function TodoComponent({ id, x, y, zIndex, isActive, select }: TodoProps) {
   const initialWidth = 200;
   const dispatchTodos = React.useContext(DispatchTodosContext);
+
   return (
     <div
       className={`TodoBox ${isActive ? "active" : ""}`}
@@ -49,6 +50,7 @@ function TodoComponent({ id, x, y, zIndex, isActive, select }: TodoProps) {
           // Prevents the delete key from deleting the note while editing text
           e.stopPropagation();
         }}
+        onMouseMove={(e) => e.stopPropagation()}
         autoFocus
         multiline
         className="text"
