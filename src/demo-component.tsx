@@ -17,34 +17,29 @@ export function DemoComponent() {
   };
   return (
     <div style={{ background: "black", color: "white", height: "100vh" }}>
+      <div className="demo-box" style={{ transform: "" }}>
+        Original
+      </div>
+      <div className="demo-box" style={{ transform: "scale(.5)" }}>
+        Scaled
+      </div>
       <div
-        id="one"
-        onClick={(e) => click("1", e)}
-        onKeyDown={(e) => key("1", e)}
-        style={styling}
+        className="demo-box"
+        style={{ transform: "translate(200px, 200px) scale(.5)" }}
       >
-        1
-        <div
-          id="two"
-          onClick={(e) => click("2", e)}
-          onKeyDown={(e) => key("2", e)}
-          style={styling}
-        >
-          2
-          <textarea
-            id="three"
-            onClick={(e) => click("3", e)}
-            onKeyDown={(e) => {
-              key("3", e);
-              if (e.key === "Delete") {
-                e.stopPropagation();
-              }
-            }}
-            style={styling}
-          >
-            3
-          </textarea>
-        </div>
+        Translate, Scale
+      </div>
+      <div
+        className="demo-box"
+        style={{ transform: "translate(200px, 200px)" }}
+      >
+        Translate
+      </div>
+      <div
+        className="demo-box"
+        style={{ transform: "scale(.5) translate(200px, 200px)" }}
+      >
+        Scale, Translate
       </div>
     </div>
   );
