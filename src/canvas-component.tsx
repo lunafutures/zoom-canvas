@@ -1,6 +1,5 @@
 import React from "react";
-import { useNoteReducer } from "./note-reducer";
-import { DispatchNotesContext } from "./note-component";
+import { DispatchNotesContext, useNoteReducer } from "./note-reducer";
 import { NoteCollectionComponent } from "./note-collection-component";
 
 export function CanvasComponent() {
@@ -79,13 +78,10 @@ export function CanvasComponent() {
           dispatchNotes({ type: "end-drag" });
         }}
       >
-        <DispatchNotesContext.Provider value={dispatchNotes}>
-          <NoteCollectionComponent
-            center={notes.center}
-            notes={notes}
-            select={select}
-            setText={setText}
-          />
+        <DispatchNotesContext.Provider
+          value={{ dispatchNotes, select, setText }}
+        >
+          <NoteCollectionComponent center={notes.center} notes={notes} />
         </DispatchNotesContext.Provider>
         <div
           className="center"

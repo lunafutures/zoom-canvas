@@ -197,8 +197,6 @@ export function useNoteReducer() {
               zIndex: nextZ,
               isActive: true,
               text: "",
-              select,
-              setText,
             },
           ],
         };
@@ -262,3 +260,12 @@ export function useNoteReducer() {
     setText,
   };
 }
+
+type DispatchNotesBundle = {
+  dispatchNotes: (value: NoteReducerAction) => void;
+  select: (id: number) => void;
+  setText: (id: number, text: string) => void;
+};
+export const DispatchNotesContext = React.createContext<DispatchNotesBundle>(
+  undefined as any
+);

@@ -5,14 +5,10 @@ import { AllNotesState } from "./note-reducer";
 export interface NoteCollectionProps {
   center: Point;
   notes: AllNotesState;
-  select: (id: number) => void;
-  setText: (id: number, text: string) => void;
 }
 export function NoteCollectionComponent({
   center,
   notes,
-  select,
-  setText,
 }: NoteCollectionProps) {
   return (
     <>
@@ -25,8 +21,6 @@ export function NoteCollectionComponent({
           id={note.id}
           isActive={note.isActive}
           text={note.text}
-          select={select}
-          setText={setText}
         />
       ))}
     </>

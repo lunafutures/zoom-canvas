@@ -1,10 +1,6 @@
 import TextField from "@mui/material/TextField";
 import React from "react";
-import { NoteReducerAction } from "./note-reducer";
-
-export const DispatchNotesContext = React.createContext<
-  (value: NoteReducerAction) => void
->(undefined as any);
+import { DispatchNotesContext } from "./note-reducer";
 
 export interface NoteProps {
   id: number;
@@ -13,21 +9,11 @@ export interface NoteProps {
   zIndex: number;
   isActive: boolean;
   text: string;
-  select: (id: number) => void;
-  setText: (id: number, text: string) => void;
 }
-export function NoteComponent({
-  id,
-  x,
-  y,
-  zIndex,
-  isActive,
-  text,
-  select,
-  setText,
-}: NoteProps) {
+export function NoteComponent({ id, x, y, zIndex, isActive, text }: NoteProps) {
   const initialWidth = 200;
-  const dispatchNotes = React.useContext(DispatchNotesContext);
+  const { dispatchNotes, select, setText } =
+    React.useContext(DispatchNotesContext);
 
   return (
     <div
