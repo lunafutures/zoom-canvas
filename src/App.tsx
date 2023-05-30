@@ -16,9 +16,20 @@ interface NoteProps {
   y: number;
   zIndex: number;
   isActive: boolean;
+  text: string;
   select: (id: number) => void;
+  setText: (id: number, text: string) => void;
 }
-function NoteComponent({ id, x, y, zIndex, isActive, select }: NoteProps) {
+function NoteComponent({
+  id,
+  x,
+  y,
+  zIndex,
+  isActive,
+  text,
+  select,
+  setText,
+}: NoteProps) {
   const initialWidth = 200;
   const dispatchNotes = React.useContext(DispatchNotesContext);
 
@@ -56,6 +67,11 @@ function NoteComponent({ id, x, y, zIndex, isActive, select }: NoteProps) {
         className="text"
         placeholder="Task description"
         spellCheck={isActive}
+        defaultValue={text}
+        onInput={(e) => {
+          const newText = (e.target as HTMLTextAreaElement).value;
+          setText(id, newText);
+        }}
       />
     </div>
   );
@@ -75,6 +91,11 @@ interface ClearAction {
 }
 interface DeselectAction {
   type: "deselect";
+}
+interface UpdateTextAction {
+  type: "update-text";
+  id: number;
+  text: string;
 }
 interface DeleteActiveAction {
   type: "delete-active";
@@ -96,6 +117,7 @@ type NoteReducerAction =
   | CreateAction
   | ClearAction
   | DeselectAction
+  | UpdateTextAction
   | DeleteActiveAction
   | StartDragAction
   | UpdateDragAction
@@ -138,6 +160,10 @@ function useNoteReducer() {
 
   function select(id: number): void {
     dispatchNotes({ type: "select", id });
+  }
+
+  function setText(id: number, text: string): void {
+    dispatchNotes({ type: "update-text", id, text });
   }
 
   function clearActive(notes: NoteProps[]) {
@@ -243,7 +269,9 @@ function useNoteReducer() {
               y: action.y,
               zIndex: nextZ,
               isActive: true,
-              select: (id) => select(id),
+              text: "",
+              select,
+              setText,
             },
           ],
         };
@@ -256,6 +284,15 @@ function useNoteReducer() {
         };
       case "deselect":
         return { ...previous, notes: clearActive(previous.notes) };
+      case "update-text":
+        return {
+          ...previous,
+          notes: previous.notes.map((note) => {
+            return note.id === action.id
+              ? { ...note, text: action.text }
+              : note;
+          }),
+        };
       case "delete-active":
         return {
           ...previous,
@@ -295,6 +332,7 @@ function useNoteReducer() {
     dispatchNotes,
     select,
     clearActive,
+    setText,
   };
 }
 
@@ -302,11 +340,13 @@ interface NoteCollectionProps {
   center: Point;
   notes: AllNotesState;
   select: (id: number) => void;
+  setText: (id: number, text: string) => void;
 }
 function NoteCollectionComponent({
   center,
   notes,
   select,
+  setText,
 }: NoteCollectionProps) {
   return (
     <>
@@ -318,7 +358,9 @@ function NoteCollectionComponent({
           key={note.id}
           id={note.id}
           isActive={note.isActive}
-          select={() => select(note.id)}
+          text={note.text}
+          select={select}
+          setText={setText}
         />
       ))}
     </>
@@ -326,7 +368,7 @@ function NoteCollectionComponent({
 }
 
 function CanvasComponent() {
-  const { notes, dispatchNotes, select } = useNoteReducer();
+  const { notes, dispatchNotes, select, setText } = useNoteReducer();
 
   React.useEffect(() => {
     function documentKeyListener(e: KeyboardEvent) {
@@ -393,6 +435,7 @@ function CanvasComponent() {
             center={notes.center}
             notes={notes}
             select={select}
+            setText={setText}
           />
         </DispatchNotesContext.Provider>
       </div>
