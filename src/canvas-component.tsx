@@ -48,8 +48,10 @@ export function CanvasComponent() {
           if (e.currentTarget !== e.target) return;
           dispatchNotes({
             type: "create",
-            x: e.nativeEvent.offsetX + notes.center.x,
-            y: e.nativeEvent.offsetY + notes.center.y,
+            absoluteMousePoint: new Point(
+              e.nativeEvent.offsetX,
+              e.nativeEvent.offsetY
+            ),
           });
         }}
         onMouseDown={(e) => {

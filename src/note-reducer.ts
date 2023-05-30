@@ -1,6 +1,7 @@
 import React from "react";
 import _ from "lodash";
 import { Point } from "./common";
+import { ClientRequest } from "http";
 
 interface SelectAction {
   type: "select";
@@ -8,8 +9,7 @@ interface SelectAction {
 }
 interface CreateAction {
   type: "create";
-  x: number;
-  y: number;
+  absoluteMousePoint: Point;
 }
 interface ClearAction {
   type: "clear";
@@ -214,6 +214,10 @@ export function useNoteReducer() {
           ),
         };
       case "create":
+        const newPoint = action.absoluteMousePoint
+          .subtract(previous.center)
+          .scale(1 / previous.zoom);
+
         const nextId = previous.idMax + 1;
         return {
           ...previous,
@@ -223,8 +227,8 @@ export function useNoteReducer() {
             ...clearActive(previous.notes),
             {
               id: nextId,
-              x: action.x,
-              y: action.y,
+              x: newPoint.x,
+              y: newPoint.y,
               zIndex: nextZ,
               isActive: true,
               text: "",
