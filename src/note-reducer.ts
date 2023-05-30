@@ -278,7 +278,7 @@ export function useNoteReducer() {
         };
       case "update-drag":
         return updateDrag(action.point, previous);
-      case "end-drag": // TODO
+      case "end-drag":
         return { ...previous, delta: undefined };
       case "zoom":
         return zoom(previous, action.direction, action.mouseLocation);
