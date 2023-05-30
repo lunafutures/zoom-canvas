@@ -1,7 +1,6 @@
 import React from "react";
 import _ from "lodash";
 import { Point } from "./common";
-import { ClientRequest } from "http";
 
 interface SelectAction {
   type: "select";
@@ -242,6 +241,7 @@ export function useNoteReducer() {
           zIndexMax: 0,
           zoom: 1,
           notes: [],
+          center: new Point(0, 0),
         };
       case "deselect":
         return { ...previous, notes: clearActive(previous.notes) };
