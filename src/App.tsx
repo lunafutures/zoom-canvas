@@ -438,6 +438,12 @@ function CanvasComponent() {
             setText={setText}
           />
         </DispatchNotesContext.Provider>
+        <div
+          className="center"
+          style={{ left: -notes.center.x, top: -notes.center.y }}
+        >
+          center
+        </div>
       </div>
       <div className="AppFooter">Footer</div>
     </div>

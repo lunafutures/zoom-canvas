@@ -36,6 +36,13 @@
   }
 }
 
+.center {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  border: 1px solid white;
+  padding: 5px;
+}
+
 .NoteBox {
   position: absolute;
   box-sizing: border-box;
