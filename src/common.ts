@@ -1,8 +1,5 @@
 export class Point {
-  public readonly z: number;
-  constructor(public readonly x: number, public readonly y: number) {
-    this.z = 1234;
-  }
+  constructor(public readonly x: number, public readonly y: number) {}
 
   add(other: Point): Point {
     return new Point(this.x + other.x, this.y + other.y);
