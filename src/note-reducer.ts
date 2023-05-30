@@ -1,5 +1,4 @@
 import React from "react";
-import { NoteProps } from "./note-component";
 import _ from "lodash";
 import { Point } from "./common";
 
@@ -38,6 +37,11 @@ interface UpdateDragAction {
 interface EndDragAction {
   type: "end-drag";
 }
+interface ZoomAction {
+  type: "zoom";
+  direction: "in" | "out";
+  mouseLocation: Point;
+}
 export type NoteReducerAction =
   | SelectAction
   | CreateAction
@@ -47,7 +51,8 @@ export type NoteReducerAction =
   | DeleteActiveAction
   | StartDragAction
   | UpdateDragAction
-  | EndDragAction;
+  | EndDragAction
+  | ZoomAction;
 
 interface Delta {
   startDrag: Point;
@@ -57,11 +62,21 @@ interface Delta {
   itemUnderDrag: number | "pan";
 }
 export interface AllNotesState {
-  notes: NoteProps[];
+  notes: NoteState[];
   zIndexMax: number;
   idMax: number;
   delta?: Delta;
   center: Point;
+  zoom: number;
+}
+
+export interface NoteState {
+  id: number;
+  x: number;
+  y: number;
+  zIndex: number;
+  isActive: boolean;
+  text: string;
 }
 
 export function useNoteReducer() {
@@ -70,14 +85,23 @@ export function useNoteReducer() {
     zIndexMax: 0,
     idMax: 0,
     delta: undefined,
-    center: { x: 0, y: 0 },
+    center: new Point(0, 0),
+    zoom: 1.0,
   };
   const [notes, dispatchNotes] = React.useReducer(
     noteReducer,
     undefined,
     () => {
       const item = localStorage.getItem("notes");
-      return item ? (JSON.parse(item) as AllNotesState) : initialNoteState;
+      if (!item) {
+        return initialNoteState;
+      }
+
+      const loadValue = JSON.parse(item);
+      return {
+        ...loadValue,
+        center: new Point(loadValue.center.x, loadValue.center.y),
+      };
     }
   );
 
@@ -93,7 +117,7 @@ export function useNoteReducer() {
     dispatchNotes({ type: "update-text", id, text });
   }
 
-  function clearActive(notes: NoteProps[]) {
+  function clearActive(notes: NoteState[]) {
     return notes.map((note) => {
       return { ...note, isActive: false };
     });
@@ -105,11 +129,11 @@ export function useNoteReducer() {
     }
 
     const startDrag = previous.delta.startDrag;
-    const delta = subtractPoints(startDrag, endDrag);
+    const delta = startDrag.subtract(endDrag);
     const previousPosition = previous.delta.previousPosition;
 
     if (previous.delta?.itemUnderDrag === "pan") {
-      const newPosition = addPoints(previousPosition, delta);
+      const newPosition = previousPosition.add(delta.scale(-1));
       return {
         ...previous,
         delta: {
@@ -122,7 +146,7 @@ export function useNoteReducer() {
         center: newPosition,
       };
     } else {
-      const newPosition = subtractPoints(previousPosition, delta);
+      const newPosition = previousPosition.subtract(delta);
       return {
         ...previous,
         delta: {
@@ -147,22 +171,28 @@ export function useNoteReducer() {
     }
   }
 
-  function addPoints(point1: Point, point2: Point): Point {
-    return {
-      x: point1.x + point2.x,
-      y: point1.y + point2.y,
-    };
+  function itemToPoint(note: NoteState): Point {
+    return new Point(note.x, note.y);
   }
 
-  function subtractPoints(point1: Point, point2: Point): Point {
+  function zoom(
+    previous: AllNotesState,
+    direction: "out" | "in",
+    mouseLocation: Point
+  ): AllNotesState {
+    const zoomFactor = 1.2;
+    const newZoom =
+      direction === "out"
+        ? previous.zoom / zoomFactor
+        : previous.zoom * zoomFactor;
+    const mouseToCenter = previous.center.subtract(mouseLocation);
+    const scaledMouseToCenter = mouseToCenter.scale(newZoom / previous.zoom);
+    const newCenter = scaledMouseToCenter.add(mouseLocation);
     return {
-      x: point1.x - point2.x,
-      y: point1.y - point2.y,
+      ...previous,
+      center: newCenter,
+      zoom: newZoom,
     };
-  }
-
-  function itemToPoint(note: NoteProps): Point {
-    return { x: note.x, y: note.y };
   }
 
   function noteReducer(
@@ -205,6 +235,7 @@ export function useNoteReducer() {
           ...previous,
           idMax: 0,
           zIndexMax: 0,
+          zoom: 1,
           notes: [],
         };
       case "deselect":
@@ -249,6 +280,8 @@ export function useNoteReducer() {
         return updateDrag(action.point, previous);
       case "end-drag": // TODO
         return { ...previous, delta: undefined };
+      case "zoom":
+        return zoom(previous, action.direction, action.mouseLocation);
     }
   }
 

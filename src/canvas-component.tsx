@@ -1,6 +1,7 @@
 import React from "react";
 import { DispatchNotesContext, useNoteReducer } from "./note-reducer";
 import { NoteCollectionComponent } from "./note-collection-component";
+import { Point } from "./common";
 
 export function CanvasComponent() {
   const { notes, dispatchNotes, select, setText } = useNoteReducer();
@@ -34,12 +35,14 @@ export function CanvasComponent() {
         onClick={() => dispatchNotes({ type: "deselect" })}
         onWheel={(e) => {
           const clientRect = canvasDiv.current!.getBoundingClientRect();
-          const fractionX = (e.clientX - clientRect.left) / clientRect.width;
-          const fractionY = (e.clientY - clientRect.top) / clientRect.height;
-          console.log(
-            // `deltaY ${e.deltaY}, client ${e.clientX}, ${e.clientY}, page ${e.pageX} ${e.pageY}, screen ${e.screenX} ${e.screenY} offset ${e.nativeEvent.offsetX} ${e.nativeEvent.offsetY}`
-            `deltaY ${e.deltaY}, client ${e.clientX}, ${e.clientY}, fraction x: ${fractionX} y: ${fractionY}`
-          );
+          const mouseX = e.clientX - clientRect.left;
+          const mouseY = e.clientY - clientRect.top;
+
+          dispatchNotes({
+            type: "zoom",
+            direction: e.deltaY < 0 ? "in" : "out",
+            mouseLocation: new Point(mouseX, mouseY),
+          });
         }}
         onDoubleClick={(e) => {
           if (e.currentTarget !== e.target) return;
@@ -55,22 +58,16 @@ export function CanvasComponent() {
           dispatchNotes({
             type: "start-drag",
             itemUnderDrag: "pan",
-            point: {
-              // Use clientX instead of nativeEvent.offsetX so that if you mouse over a child element,
-              // the value won't suddenly shift (offsetX is relative to the child, clientX is global for all elements)
-              x: e.clientX,
-              y: e.clientY,
-            },
+            // Use clientX instead of nativeEvent.offsetX so that if you mouse over a child element,
+            // the value won't suddenly shift (offsetX is relative to the child, clientX is global for all elements)
+            point: new Point(e.clientX, e.clientY),
           });
         }}
         onMouseMove={(e) => {
           if (e.buttons === 4 || e.buttons === 1) {
             dispatchNotes({
               type: "update-drag",
-              point: {
-                x: e.clientX,
-                y: e.clientY,
-              },
+              point: new Point(e.clientX, e.clientY),
             });
           }
         }}
@@ -85,7 +82,9 @@ export function CanvasComponent() {
         </DispatchNotesContext.Provider>
         <div
           className="center"
-          style={{ left: -notes.center.x, top: -notes.center.y }}
+          style={{
+            transform: `translate(-50%, -50%) translate(${notes.center.x}px, ${notes.center.y}px) scale(${notes.zoom})`,
+          }}
         >
           center
         </div>

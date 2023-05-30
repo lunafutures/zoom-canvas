@@ -14,13 +14,16 @@ export function NoteCollectionComponent({
     <>
       {notes.notes.map((note) => (
         <NoteComponent
-          x={note.x - center.x}
-          y={note.y - center.y}
+          x={note.x}
+          y={note.y}
           zIndex={note.zIndex}
           key={note.id}
           id={note.id}
           isActive={note.isActive}
           text={note.text}
+          zoom={notes.zoom}
+          centerX={center.x}
+          centerY={center.y}
         />
       ))}
     </>

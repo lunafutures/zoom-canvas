@@ -1,16 +1,24 @@
 import TextField from "@mui/material/TextField";
 import React from "react";
-import { DispatchNotesContext } from "./note-reducer";
+import { DispatchNotesContext, NoteState } from "./note-reducer";
+import { Point } from "./common";
 
-export interface NoteProps {
-  id: number;
-  x: number;
-  y: number;
-  zIndex: number;
-  isActive: boolean;
-  text: string;
+export interface NoteProps extends NoteState {
+  zoom: number;
+  centerX: number;
+  centerY: number;
 }
-export function NoteComponent({ id, x, y, zIndex, isActive, text }: NoteProps) {
+export function NoteComponent({
+  id,
+  x,
+  y,
+  zIndex,
+  isActive,
+  text,
+  zoom,
+  centerX,
+  centerY,
+}: NoteProps) {
   const initialWidth = 200;
   const { dispatchNotes, select, setText } =
     React.useContext(DispatchNotesContext);
@@ -21,7 +29,7 @@ export function NoteComponent({ id, x, y, zIndex, isActive, text }: NoteProps) {
       style={{
         width: initialWidth,
         minHeight: initialWidth,
-        transform: `translate(-50%, -50%) translate(${x}px, ${y}px)`,
+        transform: `translate(-50%, -50%) translate(${centerX}px, ${centerY}px) scale(${zoom}) translate(${x}px, ${y}px)`,
         zIndex,
       }}
       onClick={(e) => {
@@ -34,7 +42,7 @@ export function NoteComponent({ id, x, y, zIndex, isActive, text }: NoteProps) {
         dispatchNotes({
           type: "start-drag",
           itemUnderDrag: id,
-          point: { x, y },
+          point: new Point(x, y),
         });
       }}
     >
