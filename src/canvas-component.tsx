@@ -23,14 +23,14 @@ export function CanvasComponent() {
   });
 
   return (
-    <div className="App">
-      <div className="AppHeader">
+    <div className="app">
+      <div className="app-header">
         <button onClick={() => dispatchNotes({ type: "clear" })}>
           Clear All
         </button>
       </div>
       <div
-        className="AppBody"
+        className="app-body"
         ref={canvasDiv}
         onClick={() => dispatchNotes({ type: "deselect" })}
         onWheel={(e) => {
@@ -91,7 +91,7 @@ export function CanvasComponent() {
           center
         </div>
       </div>
-      <div className="AppFooter">Footer</div>
+      <div className="app-footer">Footer</div>
     </div>
   );
 }

@@ -8,17 +8,17 @@
   --text-color: white;
 }
 
-.App {
+.app {
   display: grid;
   grid-template-rows: [header] auto [body] 1fr [footer] auto;
   grid-template-columns: 1fr;
   height: 100vh;
 
-  .AppHeader {
+  .app-header {
     grid-row: header / span 1;
   }
 
-  .AppBody {
+  .app-body {
     grid-row: body / span 1;
     background: var(--page-background);
     height: auto;
@@ -31,7 +31,7 @@
     overflow: hidden;
   }
 
-  .AppFooter {
+  .app-footer {
     grid-row: footer / span 1;
   }
 }
@@ -43,7 +43,7 @@
   padding: 5px;
 }
 
-.NoteBox {
+.note-box {
   position: absolute;
   box-sizing: border-box;
   background: var(--note-background);
@@ -67,7 +67,6 @@
     }
   }
 }
-
 
 .demo-box {
   border: 1px solid red;

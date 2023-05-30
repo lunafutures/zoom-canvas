@@ -24,7 +24,7 @@ export function NoteComponent({
 
   return (
     <div
-      className={`NoteBox ${isActive ? "active" : ""}`}
+      className={`note-box ${isActive ? "active" : ""}`}
       style={{
         transform: `translate(-50%, -50%) translate(${centerX}px, ${centerY}px) scale(${zoom}) translate(${x}px, ${y}px)`,
         zIndex,
