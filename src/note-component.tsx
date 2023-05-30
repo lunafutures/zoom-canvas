@@ -19,7 +19,6 @@ export function NoteComponent({
   centerX,
   centerY,
 }: NoteProps) {
-  const initialWidth = 200;
   const { dispatchNotes, select, setText } =
     React.useContext(DispatchNotesContext);
 
@@ -27,8 +26,6 @@ export function NoteComponent({
     <div
       className={`NoteBox ${isActive ? "active" : ""}`}
       style={{
-        width: initialWidth,
-        minHeight: initialWidth,
         transform: `translate(-50%, -50%) translate(${centerX}px, ${centerY}px) scale(${zoom}) translate(${x}px, ${y}px)`,
         zIndex,
       }}

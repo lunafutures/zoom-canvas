@@ -46,9 +46,9 @@
 .NoteBox {
   position: absolute;
   box-sizing: border-box;
-  padding: 10px;
   background: var(--note-background);
   border: 1px solid black;
+  width: 200px;
 
   &.active {
     border: 1px solid white;
@@ -57,6 +57,10 @@
   .text {
     width: 100%;
     height: 100%;
+
+    textarea {
+      text-align: center;
+    }
 
     fieldset {
       border: 0px;
