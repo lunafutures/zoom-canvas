@@ -369,6 +369,9 @@ function NoteCollectionComponent({
 
 function CanvasComponent() {
   const { notes, dispatchNotes, select, setText } = useNoteReducer();
+  const canvasDiv = React.useRef(
+    null
+  ) as React.MutableRefObject<HTMLDivElement | null>;
 
   React.useEffect(() => {
     function documentKeyListener(e: KeyboardEvent) {
@@ -392,7 +395,17 @@ function CanvasComponent() {
       </div>
       <div
         className="AppBody"
+        ref={canvasDiv}
         onClick={() => dispatchNotes({ type: "deselect" })}
+        onWheel={(e) => {
+          const clientRect = canvasDiv.current!.getBoundingClientRect();
+          const fractionX = (e.clientX - clientRect.left) / clientRect.width;
+          const fractionY = (e.clientY - clientRect.top) / clientRect.height;
+          console.log(
+            // `deltaY ${e.deltaY}, client ${e.clientX}, ${e.clientY}, page ${e.pageX} ${e.pageY}, screen ${e.screenX} ${e.screenY} offset ${e.nativeEvent.offsetX} ${e.nativeEvent.offsetY}`
+            `deltaY ${e.deltaY}, client ${e.clientX}, ${e.clientY}, fraction x: ${fractionX} y: ${fractionY}`
+          );
+        }}
         onDoubleClick={(e) => {
           if (e.currentTarget !== e.target) return;
           dispatchNotes({
