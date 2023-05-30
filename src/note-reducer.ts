@@ -171,7 +171,7 @@ export function useNoteReducer() {
     }
   }
 
-  function itemToPoint(note: NoteState): Point {
+  function getNotePoint(note: NoteState): Point {
     return new Point(note.x, note.y);
   }
 
@@ -259,7 +259,7 @@ export function useNoteReducer() {
         const startPosition =
           action.itemUnderDrag === "pan"
             ? previous.center
-            : itemToPoint(
+            : getNotePoint(
                 _.find(
                   previous.notes,
                   (note) => note.id === action.itemUnderDrag
