@@ -20,3 +20,9 @@ export class Point {
     return `Point(${this.x}, ${this.y})`;
   }
 }
+
+/** Used for debugging, prints and returns the object provided. */
+export function o<T>(objectToInspect: T, extraMessage: string = ""): T {
+  console.log(extraMessage, objectToInspect);
+  return objectToInspect;
+}

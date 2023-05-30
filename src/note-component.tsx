@@ -42,7 +42,7 @@ export function NoteComponent({
         dispatchNotes({
           type: "start-drag",
           itemUnderDrag: id,
-          point: new Point(x, y),
+          point: new Point(e.clientX, e.clientY),
         });
       }}
     >

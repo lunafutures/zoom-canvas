@@ -131,9 +131,9 @@ export function useNoteReducer() {
     const startDrag = previous.delta.startDrag;
     const delta = startDrag.subtract(endDrag);
     const previousPosition = previous.delta.previousPosition;
-    const newPosition = previousPosition.subtract(delta);
 
     if (previous.delta?.itemUnderDrag === "pan") {
+      const newPosition = previousPosition.subtract(delta);
       return {
         ...previous,
         delta: {
@@ -146,6 +146,8 @@ export function useNoteReducer() {
         center: newPosition,
       };
     } else {
+      const scaledDelta = delta.scale(1 / previous.zoom);
+      const newPosition = previousPosition.subtract(scaledDelta);
       return {
         ...previous,
         delta: {
