@@ -80,7 +80,10 @@ export function NoteComponent({
       />
       <div className="note-bar">
         <DragIndicatorIcon />
-        <IconButton aria-label="delete">
+        <IconButton
+          aria-label="delete"
+          onClick={(e) => dispatchNotes({ type: "delete-active" })}
+        >
           <DeleteIcon />
         </IconButton>
       </div>
