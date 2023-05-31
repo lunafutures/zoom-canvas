@@ -14,19 +14,33 @@
   height: 100vh;
   color: white;
 
-  .app-header {
+  .header {
     grid-row: header / span 1;
     background: var(--peter-river);
     display: flex;
-    justify-content: flex-start;
-    padding: 0 4px;
-    
-    > * {
-      margin: 8px 4px;
-    }
+    justify-content: space-between;
 
-    .title {
-      margin: 8px 16px;
+    .header-left {
+      display: flex;
+      justify-content: flex-start;
+      padding: 0 4px;
+      
+      > * {
+        margin: 8px 4px;
+      }
+
+      .title {
+        margin: 8px 16px;
+      }
+
+      .zoom-button:hover {
+        &::after {
+          content: "Reset Zoom";
+        }
+        .nonHoverText {
+          display: none;
+        }
+      }
     }
   }
 

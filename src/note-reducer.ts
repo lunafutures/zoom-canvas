@@ -41,6 +41,10 @@ interface ZoomAction {
   direction: "in" | "out";
   mouseLocation: Point;
 }
+interface ResetZoomAction {
+  type: "reset-zoom";
+  screenCenter: Point;
+}
 export type NoteReducerAction =
   | SelectAction
   | CreateAction
@@ -51,7 +55,8 @@ export type NoteReducerAction =
   | StartDragAction
   | UpdateDragAction
   | EndDragAction
-  | ZoomAction;
+  | ZoomAction
+  | ResetZoomAction;
 
 interface Delta {
   startDrag: Point;
@@ -185,6 +190,14 @@ export function useNoteReducer() {
       direction === "out"
         ? previous.zoom / zoomFactor
         : previous.zoom * zoomFactor;
+    return zoomTo(newZoom, previous, mouseLocation);
+  }
+
+  function zoomTo(
+    newZoom: number,
+    previous: AllNotesState,
+    mouseLocation: Point
+  ): AllNotesState {
     const mouseToCenter = previous.center.subtract(mouseLocation);
     const scaledMouseToCenter = mouseToCenter.scale(newZoom / previous.zoom);
     const newCenter = scaledMouseToCenter.add(mouseLocation);
@@ -287,6 +300,8 @@ export function useNoteReducer() {
         return { ...previous, delta: undefined };
       case "zoom":
         return zoom(previous, action.direction, action.mouseLocation);
+      case "reset-zoom":
+        return zoomTo(1, previous, action.screenCenter);
     }
   }
 
