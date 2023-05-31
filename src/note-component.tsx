@@ -26,6 +26,7 @@ export function NoteComponent({
 }: NoteProps) {
   const { dispatchNotes, select, setText } =
     React.useContext(DispatchNotesContext);
+  const textFieldHasFocus = React.useRef(false);
 
   return (
     <div
@@ -59,7 +60,19 @@ export function NoteComponent({
           // Prevents the delete key from deleting the note while editing text
           e.stopPropagation();
         }}
-        onMouseMove={(e) => e.stopPropagation()}
+        onMouseMove={(e) => {
+          // Allows selecting text without moving the note,
+          // but also allows moving the note upward without stuttering.
+          if (textFieldHasFocus.current) {
+            e.stopPropagation();
+          }
+        }}
+        onFocus={() => {
+          textFieldHasFocus.current = true;
+        }}
+        onBlur={() => {
+          textFieldHasFocus.current = false;
+        }}
         onInput={(e) => {
           const newText = (e.target as HTMLTextAreaElement).value;
           setText(id, newText);
