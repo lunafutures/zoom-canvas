@@ -43,7 +43,6 @@ interface ZoomAction {
 }
 interface ResetZoomAction {
   type: "reset-zoom";
-  screenCenter: Point;
 }
 export type NoteReducerAction =
   | SelectAction
@@ -301,7 +300,11 @@ export function useNoteReducer() {
       case "zoom":
         return zoom(previous, action.direction, action.mouseLocation);
       case "reset-zoom":
-        return zoomTo(1, previous, action.screenCenter);
+        return {
+          ...previous,
+          zoom: 1,
+          center: new Point(0, 0),
+        };
     }
   }
 

@@ -12,12 +12,10 @@ import { Point } from "./common";
 interface HeaderToolbarComponentProps {
   dispatchNotes: React.Dispatch<NoteReducerAction>;
   zoom: number;
-  getCanvasRect: () => DOMRect;
 }
 export function HeaderToolbarComponent({
   dispatchNotes,
   zoom,
-  getCanvasRect,
 }: HeaderToolbarComponentProps) {
   const zoomPercent = (zoom * 100).toLocaleString(undefined, {
     maximumFractionDigits: 0,
@@ -57,11 +55,7 @@ export function HeaderToolbarComponent({
           color="info"
           startIcon={<ZoomInIcon />}
           onClick={() => {
-            const rect = getCanvasRect();
-            dispatchNotes({
-              type: "reset-zoom",
-              screenCenter: new Point(rect.width / 2, rect.height / 2),
-            });
+            dispatchNotes({ type: "reset-zoom" });
           }}
         >
           <span className="nonHoverText">Zoom {zoomPercent}%</span>

@@ -25,11 +25,7 @@ export function CanvasComponent() {
 
   return (
     <div className="app">
-      <HeaderToolbarComponent
-        dispatchNotes={dispatchNotes}
-        zoom={notes.zoom}
-        getCanvasRect={() => canvasDiv.current!.getBoundingClientRect()}
-      />
+      <HeaderToolbarComponent dispatchNotes={dispatchNotes} zoom={notes.zoom} />
       <div
         className="app-body"
         ref={canvasDiv}
