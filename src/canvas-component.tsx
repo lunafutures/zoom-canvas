@@ -88,7 +88,6 @@ export function CanvasComponent() {
           center
         </div>
       </div>
-      <div className="app-footer">Footer</div>
     </div>
   );
 }

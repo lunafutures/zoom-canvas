@@ -9,7 +9,7 @@
 
 .app {
   display: grid;
-  grid-template-rows: [header] auto [body] 1fr [footer] auto;
+  grid-template-rows: [header] auto [body] 1fr;
   grid-template-columns: 1fr;
   height: 100vh;
   color: white;
@@ -41,10 +41,6 @@
 
     /* Don't let boxes appear outside of this container */
     overflow: hidden;
-  }
-
-  .app-footer {
-    grid-row: footer / span 1;
   }
 }
 
