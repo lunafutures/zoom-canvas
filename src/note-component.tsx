@@ -1,7 +1,12 @@
-import TextField from "@mui/material/TextField";
-import React from "react";
 import { DispatchNotesContext, NoteState } from "./note-reducer";
 import { Point } from "./common";
+
+import React from "react";
+
+import TextField from "@mui/material/TextField";
+import { IconButton } from "@mui/material";
+import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 export interface NoteProps extends NoteState {
   zoom: number;
@@ -44,22 +49,28 @@ export function NoteComponent({
       }}
     >
       <TextField
+        className="note-text"
+        autoFocus
+        multiline
+        placeholder="Enter description"
+        spellCheck={isActive}
+        defaultValue={text}
         onKeyDown={(e) => {
           // Prevents the delete key from deleting the note while editing text
           e.stopPropagation();
         }}
         onMouseMove={(e) => e.stopPropagation()}
-        autoFocus
-        multiline
-        className="text"
-        placeholder="Task description"
-        spellCheck={isActive}
-        defaultValue={text}
         onInput={(e) => {
           const newText = (e.target as HTMLTextAreaElement).value;
           setText(id, newText);
         }}
       />
+      <div className="note-bar">
+        <DragIndicatorIcon />
+        <IconButton aria-label="delete">
+          <DeleteIcon />
+        </IconButton>
+      </div>
     </div>
   );
 }
