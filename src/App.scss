@@ -16,6 +16,13 @@
 
   .app-header {
     grid-row: header / span 1;
+    background: var(--peter-river);
+    display: flex;
+    justify-content: flex-start;
+    
+    button {
+      margin: 10px;
+    }
   }
 
   .app-body {

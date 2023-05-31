@@ -2,6 +2,7 @@ import React from "react";
 import { DispatchNotesContext, useNoteReducer } from "./note-reducer";
 import { NoteCollectionComponent } from "./note-collection-component";
 import { Point } from "./common";
+import { HeaderToolbarComponent } from "./header-toolbar-component";
 
 export function CanvasComponent() {
   const { notes, dispatchNotes, select, setText } = useNoteReducer();
@@ -24,11 +25,7 @@ export function CanvasComponent() {
 
   return (
     <div className="app">
-      <div className="app-header">
-        <button onClick={() => dispatchNotes({ type: "clear" })}>
-          Clear All
-        </button>
-      </div>
+      <HeaderToolbarComponent dispatchNotes={dispatchNotes} />
       <div
         className="app-body"
         ref={canvasDiv}
