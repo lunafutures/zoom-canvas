@@ -1,3 +1,4 @@
+export const githubUrl = "https://github.com/lunafutures/zoom-canvas";
 export class Point {
   constructor(public readonly x: number, public readonly y: number) {}
 

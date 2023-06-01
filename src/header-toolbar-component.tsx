@@ -7,7 +7,7 @@ import GitHubIcon from "@mui/icons-material/GitHub";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import { AllNotesState, NoteReducerAction } from "./note-reducer";
 import React from "react";
-import { Point } from "./common";
+import { Point, githubUrl } from "./common";
 import {
   Dialog,
   DialogActions,
@@ -96,7 +96,12 @@ export function HeaderToolbarComponent({
         >
           Help
         </Button>
-        <Button variant="contained" color="info" startIcon={<GitHubIcon />}>
+        <Button
+          variant="contained"
+          color="info"
+          startIcon={<GitHubIcon />}
+          onClick={() => window.open(githubUrl, "_blank")}
+        >
           View Source
         </Button>
         <Button
