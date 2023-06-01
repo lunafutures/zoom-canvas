@@ -49,7 +49,8 @@ export function HeaderToolbarComponent({
   const zoomPercent = (notes.zoom * 100).toLocaleString(undefined, {
     maximumFractionDigits: 0,
   });
-  const [dialogOpen, setDialogOpen] = React.useState(false);
+  const [resetDialogOpen, setResetDialogOpen] = React.useState(false);
+  const [helpDialogOpen, setHelpDialogOpen] = React.useState(false);
   return (
     <div className="header">
       <div className="header-left">
@@ -58,7 +59,7 @@ export function HeaderToolbarComponent({
           variant="contained"
           color="error"
           startIcon={<DeleteForeverIcon />}
-          onClick={() => setDialogOpen(true)}
+          onClick={() => setResetDialogOpen(true)}
         >
           Reset
         </Button>
@@ -80,7 +81,12 @@ export function HeaderToolbarComponent({
         >
           Upload
         </Button>
-        <Button variant="contained" color="info" startIcon={<HelpIcon />}>
+        <Button
+          variant="contained"
+          color="info"
+          startIcon={<HelpIcon />}
+          onClick={() => setHelpDialogOpen(true)}
+        >
           Help
         </Button>
         <Button variant="contained" color="info" startIcon={<GitHubIcon />}>
@@ -142,10 +148,10 @@ export function HeaderToolbarComponent({
       />
       <Dialog
         className="dialog"
-        open={dialogOpen}
-        onClose={() => setDialogOpen(false)}
+        open={resetDialogOpen}
+        onClose={() => setResetDialogOpen(false)}
       >
-        <DialogTitle>Confirmation</DialogTitle>
+        <DialogTitle>Reset</DialogTitle>
         <DialogContent className="dialog-content">
           <DialogContentText>
             Are you sure you want to delete all notes? This action cannot be
@@ -153,16 +159,41 @@ export function HeaderToolbarComponent({
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
+          <Button onClick={() => setResetDialogOpen(false)}>Cancel</Button>
           <Button
             onClick={() => {
-              setDialogOpen(false);
+              setResetDialogOpen(false);
               dispatchNotes({ type: "clear" });
             }}
             autoFocus
           >
             OK
           </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        className="dialog"
+        open={helpDialogOpen}
+        onClose={() => setHelpDialogOpen(false)}
+      >
+        <DialogTitle>Help Info</DialogTitle>
+        <DialogContent className="dialog-content">
+          <DialogContentText>
+            Double click anywhere to create a new note.
+          </DialogContentText>
+          <DialogContentText>
+            Left click and drag on a note to move it.
+          </DialogContentText>
+          <DialogContentText>
+            Middle mouse click and drag to pan around the canvas.
+          </DialogContentText>
+          <DialogContentText>
+            Middle mouse wheel to zoom in and out.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setHelpDialogOpen(false)}>OK</Button>
         </DialogActions>
       </Dialog>
     </div>
