@@ -44,6 +44,10 @@ interface ZoomAction {
 interface ResetZoomAction {
   type: "reset-zoom";
 }
+interface ReplaceStateAction {
+  type: "replace-state";
+  newState: AllNotesState;
+}
 export type NoteReducerAction =
   | SelectAction
   | CreateAction
@@ -55,7 +59,8 @@ export type NoteReducerAction =
   | UpdateDragAction
   | EndDragAction
   | ZoomAction
-  | ResetZoomAction;
+  | ResetZoomAction
+  | ReplaceStateAction;
 
 interface Delta {
   startDrag: Point;
@@ -305,6 +310,8 @@ export function useNoteReducer() {
           zoom: 1,
           center: new Point(0, 0),
         };
+      case "replace-state":
+        return action.newState;
     }
   }
 

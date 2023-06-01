@@ -5,19 +5,41 @@ import HelpIcon from "@mui/icons-material/Help";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
-import { NoteReducerAction } from "./note-reducer";
-import { upload } from "./file-management";
+import { AllNotesState, NoteReducerAction } from "./note-reducer";
+import React from "react";
 import { Point } from "./common";
+
+function download(filename: string, text: string): void {
+  var element: HTMLAnchorElement | undefined = undefined;
+  try {
+    element = document.createElement("a");
+    element.setAttribute(
+      "href",
+      "data:text/plain;charset=utf-8," + encodeURIComponent(text)
+    );
+    element.setAttribute("download", filename);
+
+    element.style.display = "none";
+    document.body.appendChild(element);
+
+    element.click();
+  } finally {
+    if (element) {
+      document.body.removeChild(element);
+    }
+  }
+}
 
 interface HeaderToolbarComponentProps {
   dispatchNotes: React.Dispatch<NoteReducerAction>;
-  zoom: number;
+  notes: AllNotesState;
 }
 export function HeaderToolbarComponent({
   dispatchNotes,
-  zoom,
+  notes,
 }: HeaderToolbarComponentProps) {
-  const zoomPercent = (zoom * 100).toLocaleString(undefined, {
+  const fileInputRef = React.useRef<HTMLInputElement>(null as any);
+  const zoomPercent = (notes.zoom * 100).toLocaleString(undefined, {
     maximumFractionDigits: 0,
   });
   return (
@@ -32,16 +54,23 @@ export function HeaderToolbarComponent({
         >
           Reset
         </Button>
-        <Button variant="contained" color="primary" startIcon={<SaveIcon />}>
-          Save
+        <Button
+          variant="contained"
+          color="success"
+          startIcon={<SaveIcon />}
+          onClick={() =>
+            download("zoom-canvas.json", JSON.stringify(notes, null, 2))
+          }
+        >
+          Download
         </Button>
         <Button
           variant="contained"
           color="primary"
           startIcon={<UploadIcon />}
-          onClick={() => upload()}
+          onClick={() => fileInputRef.current.click()}
         >
-          Load
+          Upload
         </Button>
         <Button variant="contained" color="info" startIcon={<HelpIcon />}>
           Help
@@ -52,7 +81,7 @@ export function HeaderToolbarComponent({
         <Button
           className="zoom-button"
           variant="contained"
-          color="info"
+          color="primary"
           startIcon={<ZoomInIcon />}
           onClick={() => {
             dispatchNotes({ type: "reset-zoom" });
@@ -61,13 +90,48 @@ export function HeaderToolbarComponent({
           <span className="nonHoverText">Zoom {zoomPercent}%</span>
         </Button>
       </div>
-      <div className="header-right">
-        <input
-          type="file"
-          id="myFile"
-          onChange={(e) => console.log("input file onChange", e)}
-        />
-      </div>
+      <input
+        id="hidden-file-input"
+        ref={fileInputRef}
+        type="file"
+        accept="application/json"
+        onChange={(e) => {
+          const files = e.target.files;
+          if (!files || files.length !== 1) {
+            console.error("Missing or too many files for upload:", files);
+            return;
+          }
+
+          const file = files[0];
+          console.log("file:", file);
+          const reader = new FileReader();
+          reader.readAsText(file);
+          reader.onload = () => {
+            const readText = reader.result;
+            const readObj = JSON.parse(readText as string);
+            const missingKeys = [
+              "notes",
+              "zIndexMax",
+              "idMax",
+              "center",
+              "zoom",
+            ].filter((key) => !(key in readObj));
+            if (missingKeys.length > 0) {
+              console.error(
+                "Some keys not found in uploaded JSON file:",
+                missingKeys
+              );
+              return;
+            }
+
+            const newState = {
+              ...readObj,
+              center: new Point(readObj.center.x, readObj.center.y),
+            } as AllNotesState;
+            dispatchNotes({ type: "replace-state", newState });
+          };
+        }}
+      />
     </div>
   );
 }

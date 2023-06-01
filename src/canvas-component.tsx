@@ -25,7 +25,7 @@ export function CanvasComponent() {
 
   return (
     <div className="app">
-      <HeaderToolbarComponent dispatchNotes={dispatchNotes} zoom={notes.zoom} />
+      <HeaderToolbarComponent dispatchNotes={dispatchNotes} notes={notes} />
       <div
         className="app-body"
         ref={canvasDiv}
