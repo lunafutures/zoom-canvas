@@ -191,6 +191,17 @@ export function HeaderToolbarComponent({
           <DialogContentText>
             Middle mouse wheel to zoom in and out.
           </DialogContentText>
+          <DialogContentText>
+            All data is stored locally (in{" "}
+            <a
+              href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage"
+              target="_blank"
+              rel="noreferrer"
+            >
+              localstorage
+            </a>
+            ).
+          </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setHelpDialogOpen(false)}>OK</Button>

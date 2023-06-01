@@ -109,12 +109,17 @@
   }
 }
 
-.dialog .MuiPaper-root {
-  background-color: rgb(60, 60, 60);
-  color: white;
+.dialog {
+  .MuiPaper-root {
+    background-color: rgb(60, 60, 60);
+    color: white;
+  }
 
   p.MuiTypography-root {
     color: white;
+    a {
+      color: var(--peter-river);
+    }
   }
 
   button.MuiButtonBase-root {
