@@ -109,6 +109,20 @@
   }
 }
 
+.dialog .MuiPaper-root {
+  background-color: rgb(60, 60, 60);
+  color: white;
+
+  p.MuiTypography-root {
+    color: white;
+  }
+
+  button.MuiButtonBase-root {
+    color: rgb(144, 202, 249);
+  }
+}
+
+
 .demo-box {
   border: 1px solid red;
   position: absolute;

@@ -8,6 +8,13 @@ import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import { AllNotesState, NoteReducerAction } from "./note-reducer";
 import React from "react";
 import { Point } from "./common";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
 
 function download(filename: string, text: string): void {
   var element: HTMLAnchorElement | undefined = undefined;
@@ -42,6 +49,7 @@ export function HeaderToolbarComponent({
   const zoomPercent = (notes.zoom * 100).toLocaleString(undefined, {
     maximumFractionDigits: 0,
   });
+  const [dialogOpen, setDialogOpen] = React.useState(false);
   return (
     <div className="header">
       <div className="header-left">
@@ -50,7 +58,7 @@ export function HeaderToolbarComponent({
           variant="contained"
           color="error"
           startIcon={<DeleteForeverIcon />}
-          onClick={() => dispatchNotes({ type: "clear" })}
+          onClick={() => setDialogOpen(true)}
         >
           Reset
         </Button>
@@ -132,6 +140,31 @@ export function HeaderToolbarComponent({
           };
         }}
       />
+      <Dialog
+        className="dialog"
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+      >
+        <DialogTitle>Confirmation</DialogTitle>
+        <DialogContent className="dialog-content">
+          <DialogContentText>
+            Are you sure you want to delete all notes? This action cannot be
+            reversed.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
+          <Button
+            onClick={() => {
+              setDialogOpen(false);
+              dispatchNotes({ type: "clear" });
+            }}
+            autoFocus
+          >
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }
