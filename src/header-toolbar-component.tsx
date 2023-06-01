@@ -14,6 +14,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Tooltip,
 } from "@mui/material";
 
 function download(filename: string, text: string): void {
@@ -55,32 +56,38 @@ export function HeaderToolbarComponent({
     <div className="header">
       <div className="header-left">
         <h2 className="title">zoom-canvas</h2>
-        <Button
-          variant="contained"
-          color="error"
-          startIcon={<DeleteForeverIcon />}
-          onClick={() => setResetDialogOpen(true)}
-        >
-          Reset
-        </Button>
-        <Button
-          variant="contained"
-          color="success"
-          startIcon={<SaveIcon />}
-          onClick={() =>
-            download("zoom-canvas.json", JSON.stringify(notes, null, 2))
-          }
-        >
-          Download
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<UploadIcon />}
-          onClick={() => fileInputRef.current.click()}
-        >
-          Upload
-        </Button>
+        <Tooltip title="Delete all notes.">
+          <Button
+            variant="contained"
+            color="error"
+            startIcon={<DeleteForeverIcon />}
+            onClick={() => setResetDialogOpen(true)}
+          >
+            Reset
+          </Button>
+        </Tooltip>
+        <Tooltip title="Save the current state into a JSON file.">
+          <Button
+            variant="contained"
+            color="success"
+            startIcon={<SaveIcon />}
+            onClick={() =>
+              download("zoom-canvas.json", JSON.stringify(notes, null, 2))
+            }
+          >
+            Download
+          </Button>
+        </Tooltip>
+        <Tooltip title="Load a previously saved state from a file.">
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<UploadIcon />}
+            onClick={() => fileInputRef.current.click()}
+          >
+            Upload
+          </Button>
+        </Tooltip>
         <Button
           variant="contained"
           color="info"
