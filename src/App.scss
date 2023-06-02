@@ -65,9 +65,9 @@
 
 .center {
   position: absolute;
-  transform: translate(-50%, -50%);
   border: 1px solid white;
   padding: 5px;
+  display: none; // Normally hidden, but used for debugging
 }
 
 .note-box {
