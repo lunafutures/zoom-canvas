@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/zoom-canvas/static/css/main.dfa19564.css",
-    "main.js": "/zoom-canvas/static/js/main.e70567ab.js",
+    "main.js": "/zoom-canvas/static/js/main.52c4047d.js",
     "static/js/787.e9b39f4d.chunk.js": "/zoom-canvas/static/js/787.e9b39f4d.chunk.js",
     "index.html": "/zoom-canvas/index.html",
     "main.dfa19564.css.map": "/zoom-canvas/static/css/main.dfa19564.css.map",
-    "main.e70567ab.js.map": "/zoom-canvas/static/js/main.e70567ab.js.map",
+    "main.52c4047d.js.map": "/zoom-canvas/static/js/main.52c4047d.js.map",
     "787.e9b39f4d.chunk.js.map": "/zoom-canvas/static/js/787.e9b39f4d.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.dfa19564.css",
-    "static/js/main.e70567ab.js"
+    "static/js/main.52c4047d.js"
   ]
 }
