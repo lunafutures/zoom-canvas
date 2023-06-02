@@ -163,7 +163,7 @@ export function HeaderToolbarComponent({
         open={resetDialogOpen}
         onClose={() => setResetDialogOpen(false)}
       >
-        <DialogTitle>Reset</DialogTitle>
+        <DialogTitle>Reset?</DialogTitle>
         <DialogContent className="dialog-content">
           <DialogContentText>
             Are you sure you want to delete all notes? This action cannot be
