@@ -18,23 +18,19 @@ import {
 } from "@mui/material";
 
 function download(filename: string, text: string): void {
-  var element: HTMLAnchorElement | undefined = undefined;
+  const element = document.createElement("a");
+  element.setAttribute(
+    "href",
+    "data:text/plain;charset=utf-8," + encodeURIComponent(text)
+  );
+  element.setAttribute("download", filename);
+  element.style.display = "none";
+
   try {
-    element = document.createElement("a");
-    element.setAttribute(
-      "href",
-      "data:text/plain;charset=utf-8," + encodeURIComponent(text)
-    );
-    element.setAttribute("download", filename);
-
-    element.style.display = "none";
     document.body.appendChild(element);
-
     element.click();
   } finally {
-    if (element) {
-      document.body.removeChild(element);
-    }
+    document.body.removeChild(element);
   }
 }
 
