@@ -2,7 +2,7 @@
 
 ## What is zoom-canvas?
 
-__zoom-canvas__ allows the user to create sticky notes, but with the freedom of panning and zooming around.
+__zoom-canvas__ allows the user to create sticky notes, but with the freedom of panning and zooming around. Try it out here: https://lunafutures.github.io/zoom-canvas/
 
 ![GIF showing creation of a note, moving the note, and panning the screen](docs/zoom-demo.gif)
 
