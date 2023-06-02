@@ -28,6 +28,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
+    "predeploy" : "npm run build",
+    "deploy" : "gh-pages -d build",
     "lint:fix": "eslint src/ --fix",
     "lint": "eslint src/",
     "prettify": "prettier src/ --write"
@@ -59,6 +61,7 @@
     "@types/lodash": "^4.14.194",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
+    "gh-pages": "^5.0.0",
     "prettier": "^2.8.8",
     "sass": "^1.62.1"
   }
