@@ -27,3 +27,8 @@ export function o<T>(objectToInspect: T, extraMessage: string = ""): T {
   console.log(extraMessage, objectToInspect);
   return objectToInspect;
 }
+
+export enum MouseButton {
+  Left = 1,
+  Middle = 4,
+}

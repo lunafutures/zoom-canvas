@@ -1,5 +1,5 @@
 import { DispatchNotesContext, NoteState } from "./note-reducer";
-import { Point } from "./common";
+import { MouseButton, Point } from "./common";
 
 import React from "react";
 
@@ -46,7 +46,7 @@ export function NoteComponent({
         e.stopPropagation();
       }}
       onMouseDown={(e) => {
-        if (e.buttons !== 1) return;
+        if (e.buttons !== MouseButton.Left) return;
         select(id);
         dispatchNotes({
           type: "start-drag",
@@ -67,6 +67,10 @@ export function NoteComponent({
           e.stopPropagation();
         }}
         onMouseMove={(e) => {
+          if (e.buttons === MouseButton.Middle) {
+            return;
+          }
+
           // Allows selecting text without moving the note,
           // but also allows moving the note upward without stuttering.
           if (textFieldHasFocus.current) {

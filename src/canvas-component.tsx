@@ -1,7 +1,7 @@
 import React from "react";
 import { DispatchNotesContext, useNoteReducer } from "./note-reducer";
 import { NoteCollectionComponent } from "./note-collection-component";
-import { Point } from "./common";
+import { MouseButton, Point } from "./common";
 import { HeaderToolbarComponent } from "./header-toolbar-component";
 
 /**
@@ -59,7 +59,7 @@ export function CanvasComponent() {
           });
         }}
         onMouseDown={(e) => {
-          if (e.buttons !== 4) return;
+          if (e.buttons !== MouseButton.Middle) return;
 
           dispatchNotes({
             type: "start-drag",
@@ -70,7 +70,10 @@ export function CanvasComponent() {
           });
         }}
         onMouseMove={(e) => {
-          if (e.buttons === 4 || e.buttons === 1) {
+          if (
+            e.buttons === MouseButton.Middle ||
+            e.buttons === MouseButton.Left
+          ) {
             dispatchNotes({
               type: "update-drag",
               point: new Point(e.clientX, e.clientY),
