@@ -203,8 +203,15 @@ export function HeaderToolbarComponent({
           <DialogContentText>
             Middle mouse wheel to zoom in and out.
           </DialogContentText>
+          <br></br>
           <DialogContentText>
-            All data is stored locally (in{" "}
+            To save all data to a JSON file, click "Save To Disk". Later, that
+            file can be uploaded with "Load From Disk" which will restore the
+            earlier saved state.
+          </DialogContentText>
+          <br></br>
+          <DialogContentText>
+            All data is stored locally in{" "}
             <a
               href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage"
               target="_blank"
