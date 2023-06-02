@@ -203,6 +203,10 @@ export function HeaderToolbarComponent({
           <DialogContentText>
             Middle mouse wheel to zoom in and out.
           </DialogContentText>
+          <DialogContentText>
+            Notes can be deleted by clicking on the trash icon or by pressing
+            `Delete`.
+          </DialogContentText>
           <br></br>
           <DialogContentText>
             To save all data to a JSON file, click "Save To Disk". Later, that
