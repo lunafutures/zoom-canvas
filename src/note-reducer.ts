@@ -1,6 +1,7 @@
 import React from "react";
 import _ from "lodash";
 import { Point } from "./common";
+import { initialNoteState } from "./first-time";
 
 /** Select a note (and deselect all others).
  * @property {number} id - id of the note to be selected.
@@ -158,14 +159,6 @@ export interface NoteState {
 
 /** Function that manipulates the current {@ref AllNotesState} through {@ref NoteReducerAction}. */
 export function useNoteReducer() {
-  const initialNoteState: AllNotesState = {
-    notes: [],
-    zIndexMax: 0,
-    idMax: 0,
-    delta: undefined,
-    center: new Point(0, 0),
-    zoom: 1.0,
-  };
   const [notes, dispatchNotes] = React.useReducer(
     noteReducer,
     undefined,
