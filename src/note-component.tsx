@@ -9,10 +9,16 @@ import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 export interface NoteProps extends NoteState {
+  /** Global zoom of the canvas. */
   zoom: number;
+  /** x-position relative to `AllNotesState.`center` */
   centerX: number;
+  /** y-position relative to `AllNotesState.`center` */
   centerY: number;
 }
+/**
+ * @returns {JSX.Element} Component defining an individual note.
+ */
 export function NoteComponent({
   id,
   x,

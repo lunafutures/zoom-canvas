@@ -2,52 +2,98 @@ import React from "react";
 import _ from "lodash";
 import { Point } from "./common";
 
+/** Select a note (and deselect all others).
+ * @property {number} id - id of the note to be selected.
+ */
 interface SelectAction {
   type: "select";
   id: number;
 }
+/** Create a new note.
+ * @property {Point} absoluteMousePoint - The real mouse coordinates where the note should be created,
+ * e.g. the very top of the containing element should be (0, 0)
+ */
 interface CreateAction {
   type: "create";
   absoluteMousePoint: Point;
 }
+
+/** Delete all notes and reset to the original empty state.  */
 interface ClearAction {
   type: "clear";
 }
+
+/** Deselect if a note is selected. */
 interface DeselectAction {
   type: "deselect";
 }
+
+/** Update the internally stored text of a note to be used later when downloading the state.
+ * This is intended to be called by NoteComponent itself.
+ * @property {number} id - id of the note.
+ * @property {string} text - The changed text for the note.
+ */
 interface UpdateTextAction {
   type: "update-text";
   id: number;
   text: string;
 }
+
+/** Delete the currently active note, if any. */
 interface DeleteActiveAction {
   type: "delete-active";
 }
+
+/** Begin a drag movement. This can either apply to an individual note or to the canvas itself ("panning")
+ * @property {number | "pan"} itemUnderDrag - The ID of the note or "pan" for panning the canvas.
+ * @property {Point} point - The starting point of the drag action.
+ */
 interface StartDragAction {
   type: "start-drag";
   itemUnderDrag: number | "pan";
   point: Point;
 }
+
+/** Continue a drag movement when the mouse is moved. This must be called after {@link StartDragAction}.
+ * @property {string} type - The type of the action, which is "update-drag".
+ * @property {Point} point - The updated position during the dragging action.
+ */
 interface UpdateDragAction {
   type: "update-drag";
   point: Point;
 }
+
+/** Ends a drag movement and commits the result of the drag.  */
 interface EndDragAction {
   type: "end-drag";
 }
+
+/** Zoom the canvas in or out.
+ * @property {"in" | "out"} direction - The direction of the zoom action, either
+ * @property {Point} mouseLocation - The mouse location during the zoom action.
+ * This allows the zoom to be centered around the position of the mouse, rather
+ * than the center of the canvas.
+ */
 interface ZoomAction {
   type: "zoom";
   direction: "in" | "out";
   mouseLocation: Point;
 }
+
+/** Resets the zoom to 100%. */
 interface ResetZoomAction {
   type: "reset-zoom";
 }
+
+/** Replace the existing state with a new state, used primarily for when the user
+ * uploads a previously-downloaded JSON file describing a state.
+ * @property {AllNotesState} newState - The new state to replace the existing state with.
+ */
 interface ReplaceStateAction {
   type: "replace-state";
   newState: AllNotesState;
 }
+
 export type NoteReducerAction =
   | SelectAction
   | CreateAction
@@ -62,31 +108,55 @@ export type NoteReducerAction =
   | ResetZoomAction
   | ReplaceStateAction;
 
+/** Delta object that stores the information about a drag action. */
 interface Delta {
+  /** The starting coordinate of the drag action. */
   startDrag: Point;
+  /** The ending coordinate of the drag action. */
   endDrag: Point;
+  /** The `itemUnderDrag`'s previous position before the drag action. */
   previousPosition: Point;
+  /** The `itemUnderDrag`'s new position after the drag action. */
   newPosition: Point;
+  /** The ID of the item being dragged, or "pan" for panning the canvas. */
   itemUnderDrag: number | "pan";
 }
+
+/** Root state object containing info on notes and the canvas position. */
 export interface AllNotesState {
+  /** All notes contained with. */
   notes: NoteState[];
+  /** The highest zIndex of any of the notes (if any notes exist). */
   zIndexMax: number;
+  /** The highest id of any of the notes (if any notes exist). */
   idMax: number;
+  /** Object representing the current drag action, or `undefined` if not
+   * currently under drag. */
   delta?: Delta;
+  /** The current, user-movable center of the canvas to allow the canvas to be panned.
+   * Invisible to the user. */
   center: Point;
+  /** The current zoom level of the canvas. */
   zoom: number;
 }
 
+/** Delta object that stores the information about a drag action.  */
 export interface NoteState {
+  /** A unique and immutable number that identifies this note. */
   id: number;
+  /** The x-position of the note, relative to `AllNotesState`.`center`. */
   x: number;
+  /** The y-position of the note, relative to `AllNotesState`.`center`. */
   y: number;
+  /** The zIndex. Notes with higher zIndex appear on top. */
   zIndex: number;
+  /** Indicates if the note is currently selected. */
   isActive: boolean;
+  /** The current text of the note. */
   text: string;
 }
 
+/** Function that manipulates the current {@ref AllNotesState} through {@ref NoteReducerAction}. */
 export function useNoteReducer() {
   const initialNoteState: AllNotesState = {
     notes: [],

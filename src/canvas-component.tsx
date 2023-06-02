@@ -4,6 +4,13 @@ import { NoteCollectionComponent } from "./note-collection-component";
 import { Point } from "./common";
 import { HeaderToolbarComponent } from "./header-toolbar-component";
 
+/**
+ * CanvasComponent is a React component that represents a canvas for holding notes.
+ * It provides functionalities for creating, modifying, and deleting notes, as well as
+ * panning and zooming around the canvas.
+ *
+ * @returns {JSX.Element} A canvas component.
+ */
 export function CanvasComponent() {
   const { notes, dispatchNotes, select, setText } = useNoteReducer();
   const canvasDiv = React.useRef(

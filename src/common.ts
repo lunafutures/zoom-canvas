@@ -1,4 +1,7 @@
+/** Github location of this repo. */
 export const githubUrl = "https://github.com/lunafutures/zoom-canvas";
+
+/** Class for a simple x,y point with helper functions. */
 export class Point {
   constructor(public readonly x: number, public readonly y: number) {}
 

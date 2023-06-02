@@ -17,6 +17,7 @@ import {
   Tooltip,
 } from "@mui/material";
 
+/** Immediately downloads a file by creating a temporary <a> to simulate the download. */
 function download(filename: string, text: string): void {
   const element = document.createElement("a");
   element.setAttribute(
@@ -38,6 +39,9 @@ interface HeaderToolbarComponentProps {
   dispatchNotes: React.Dispatch<NoteReducerAction>;
   notes: AllNotesState;
 }
+/**
+ * @returns {JSX.Element} Header component that contains several buttons and the title.
+ */
 export function HeaderToolbarComponent({
   dispatchNotes,
   notes,
