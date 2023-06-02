@@ -75,7 +75,7 @@ export function HeaderToolbarComponent({
               download("zoom-canvas.json", JSON.stringify(notes, null, 2))
             }
           >
-            Download
+            Save To Disk
           </Button>
         </Tooltip>
         <Tooltip title="Load a previously saved state from a file.">
@@ -85,7 +85,7 @@ export function HeaderToolbarComponent({
             startIcon={<UploadIcon />}
             onClick={() => fileInputRef.current.click()}
           >
-            Upload
+            Load From Disk
           </Button>
         </Tooltip>
         <Button
