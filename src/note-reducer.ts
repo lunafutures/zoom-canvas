@@ -374,7 +374,15 @@ export function useNoteReducer() {
           center: new Point(0, 0),
         };
       case "replace-state":
-        return action.newState;
+        return {
+          ...action.newState,
+          idMax:
+            _.max(action.newState.notes.map((note) => note.id)) ??
+            action.newState.idMax,
+          zIndexMax:
+            _.max(action.newState.notes.map((note) => note.zIndex)) ??
+            action.newState.zIndexMax,
+        };
     }
   }
 
