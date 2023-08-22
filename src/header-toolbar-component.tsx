@@ -222,7 +222,8 @@ export function HeaderToolbarComponent({
               rel="noreferrer"
             >
               localstorage
-            </a>.
+            </a>
+            .
           </DialogContentText>
         </DialogContent>
         <DialogActions>
