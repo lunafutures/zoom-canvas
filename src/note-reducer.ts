@@ -2,6 +2,11 @@ import React from "react";
 import _ from "lodash";
 import { Point } from "./common";
 import { initialNoteState } from "./first-time";
+import {
+  getThisWindowsId,
+  readWindowId,
+  storeWindowId,
+} from "./last-window-id";
 
 /** Select a note (and deselect all others).
  * @property {number} id - id of the note to be selected.
@@ -177,8 +182,35 @@ export function useNoteReducer() {
   );
 
   React.useEffect(() => {
+    storeWindowId();
+    console.log(`Set window id to ${getThisWindowsId()}`);
+  }, []); // Only set the first time
+
+  React.useEffect(() => {
+    redirectIfWindowIdMismatch();
     localStorage.setItem("notes", JSON.stringify(notes));
   });
+
+  React.useEffect(() => {
+    const redirectIntervalId = window.setInterval(
+      redirectIfWindowIdMismatch,
+      1000
+    );
+    return () => window.clearInterval(redirectIntervalId);
+  });
+
+  function redirectIfWindowIdMismatch() {
+    const thisWindowId = getThisWindowsId();
+    const lsWindowId = readWindowId();
+    if (thisWindowId !== lsWindowId) {
+      alert(
+        `This window's id ${thisWindowId}, does not match what is in localstorage: ${lsWindowId}` +
+          "\n\nClick OK to be redirected."
+      );
+      window.location.href = "about:blank";
+      return;
+    }
+  }
 
   function select(id: number): void {
     dispatchNotes({ type: "select", id });
